@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useRoute, useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { KanbanBoard } from "@/components/KanbanBoard";
@@ -14,18 +13,11 @@ export default function BoardDetail() {
   const boardId = params?.id ? parseInt(params.id) : 0;
 
   const { data: board, isLoading: boardLoading } = trpc.boards.get.useQuery(
-    { boardId },
-    { enabled: boardId > 0 }
+    { id: boardId },
   );
 
-  const { data: membersData } = trpc.members.list.useQuery(
+  const { data: members = [] } = trpc.boardMembers.list.useQuery(
     { boardId },
-    { enabled: boardId > 0 }
-  );
-
-  const { data: activities = [] } = trpc.activity.get.useQuery(
-    { boardId },
-    { enabled: boardId > 0, refetchInterval: 5000 } // Poll every 5 seconds for real-time updates
   );
 
   if (boardLoading) {
@@ -92,25 +84,6 @@ export default function BoardDetail() {
             </div>
 
             <div className="flex items-center gap-2">
-              {/* Real-time collaboration indicators */}
-              {activities.length > 0 && (
-                <div className="flex -space-x-2 mr-2">
-                  {activities.slice(0, 5).map((activity, idx) => (
-                    <Avatar
-                      key={`${activity.user.id}-${idx}`}
-                      className="w-8 h-8 border-2 border-background"
-                      title={`${activity.user.name || activity.user.email} is ${activity.activityType.replace("_", " ")}`}
-                    >
-                      <AvatarFallback className="text-xs">
-                        {activity.user.name?.charAt(0).toUpperCase() ||
-                          activity.user.email?.charAt(0).toUpperCase() ||
-                          "?"}
-                      </AvatarFallback>
-                    </Avatar>
-                  ))}
-                </div>
-              )}
-
               <Sheet>
                 <SheetTrigger asChild>
                   <Button variant="outline">
@@ -123,64 +96,33 @@ export default function BoardDetail() {
                     <SheetTitle>Board Members</SheetTitle>
                   </SheetHeader>
                   <div className="mt-6 space-y-4">
-                    {membersData?.owner && (
-                      <div>
-                        <h3 className="text-sm font-semibold mb-2 text-muted-foreground">Owner</h3>
-                        <div className="flex items-center gap-3 p-3 rounded-lg bg-muted">
-                          <Avatar>
-                            <AvatarFallback>
-                              {membersData.owner.name?.charAt(0).toUpperCase() ||
-                                membersData.owner.email?.charAt(0).toUpperCase() ||
-                                "?"}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div className="flex-1 min-w-0">
-                            <p className="font-medium truncate">
-                              {membersData.owner.name || "Unknown"}
-                            </p>
-                            <p className="text-sm text-muted-foreground truncate">
-                              {membersData.owner.email}
-                            </p>
-                          </div>
-                          <Badge>Owner</Badge>
-                        </div>
-                      </div>
-                    )}
-
-                    {membersData?.members && membersData.members.length > 0 && (
-                      <div>
-                        <h3 className="text-sm font-semibold mb-2 text-muted-foreground">
-                          Members ({membersData.members.length})
-                        </h3>
-                        <div className="space-y-2">
-                          {membersData.members.map((member) => (
-                            <div
-                              key={member.id}
-                              className="flex items-center gap-3 p-3 rounded-lg border"
-                            >
-                              <Avatar>
-                                <AvatarFallback>
-                                  {member.name?.charAt(0).toUpperCase() ||
-                                    member.email?.charAt(0).toUpperCase() ||
-                                    "?"}
-                                </AvatarFallback>
-                              </Avatar>
-                              <div className="flex-1 min-w-0">
-                                <p className="font-medium truncate">{member.name || "Unknown"}</p>
-                                <p className="text-sm text-muted-foreground truncate">
-                                  {member.email}
-                                </p>
-                              </div>
-                              <Badge variant="secondary">{member.role}</Badge>
+                    {members.length > 0 ? (
+                      <div className="space-y-2">
+                        {members.map((member: any) => (
+                          <div
+                            key={member.id}
+                            className="flex items-center gap-3 p-3 rounded-lg border"
+                          >
+                            <Avatar>
+                              <AvatarFallback>
+                                {member.user?.name?.charAt(0).toUpperCase() ||
+                                  member.user?.email?.charAt(0).toUpperCase() ||
+                                  "?"}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div className="flex-1 min-w-0">
+                              <p className="font-medium truncate">{member.user?.name || "Unknown"}</p>
+                              <p className="text-sm text-muted-foreground truncate">
+                                {member.user?.email}
+                              </p>
                             </div>
-                          ))}
-                        </div>
+                            <Badge variant="secondary">{member.role}</Badge>
+                          </div>
+                        ))}
                       </div>
-                    )}
-
-                    {(!membersData?.members || membersData.members.length === 0) && (
+                    ) : (
                       <div className="text-center py-8 text-sm text-muted-foreground">
-                        No other members yet. Invite team members to collaborate!
+                        No members yet. Invite team members to collaborate!
                       </div>
                     )}
                   </div>

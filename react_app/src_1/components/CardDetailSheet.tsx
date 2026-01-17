@@ -8,13 +8,17 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Calendar, Trash2, Save } from "lucide-react";
 import { toast } from "sonner";
-import { format } from "date-fns";
 
 interface CardDetailSheetProps {
   cardId: number | null;
   boardId: number;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+}
+
+function formatDate(date: Date | string): string {
+  const d = new Date(date);
+  return d.toISOString().split('T')[0];
 }
 
 export function CardDetailSheet({ cardId, boardId, open, onOpenChange }: CardDetailSheetProps) {
@@ -25,8 +29,7 @@ export function CardDetailSheet({ cardId, boardId, open, onOpenChange }: CardDet
   const [dueDate, setDueDate] = useState("");
 
   const { data: card } = trpc.cards.get.useQuery(
-    { cardId: cardId! },
-    { enabled: cardId !== null && open }
+    { id: cardId! },
   );
 
   const updateCard = trpc.cards.update.useMutation({
@@ -51,13 +54,12 @@ export function CardDetailSheet({ cardId, boardId, open, onOpenChange }: CardDet
     },
   });
 
-  // Update form when card data loads
   useEffect(() => {
     if (card) {
       setTitle(card.title);
       setDescription(card.description || "");
       setPriority(card.priority as any);
-      setDueDate(card.dueDate ? format(new Date(card.dueDate), "yyyy-MM-dd") : "");
+      setDueDate(card.dueDate ? formatDate(card.dueDate) : "");
     }
   }, [card]);
 
@@ -65,11 +67,10 @@ export function CardDetailSheet({ cardId, boardId, open, onOpenChange }: CardDet
     if (!cardId) return;
 
     updateCard.mutate({
-      cardId,
+      id: cardId,
       title,
       description: description || undefined,
       priority,
-      dueDate: dueDate ? new Date(dueDate) : null,
     });
   };
 
@@ -77,7 +78,7 @@ export function CardDetailSheet({ cardId, boardId, open, onOpenChange }: CardDet
     if (!cardId) return;
     if (!confirm("Are you sure you want to delete this card?")) return;
 
-    deleteCard.mutate({ cardId });
+    deleteCard.mutate({ id: cardId });
   };
 
   if (!card) return null;
@@ -139,34 +140,6 @@ export function CardDetailSheet({ cardId, boardId, open, onOpenChange }: CardDet
             </div>
           </div>
 
-          {card.assignees && card.assignees.length > 0 && (
-            <div>
-              <Label>Assigned To</Label>
-              <div className="mt-2 space-y-2">
-                {card.assignees.map((assignee) => (
-                  <div
-                    key={assignee.id}
-                    className="flex items-center gap-2 p-2 rounded-lg bg-muted"
-                  >
-                    <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-semibold">
-                      {assignee.name?.charAt(0).toUpperCase() ||
-                        assignee.email?.charAt(0).toUpperCase() ||
-                        "?"}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate">
-                        {assignee.name || "Unknown"}
-                      </p>
-                      <p className="text-xs text-muted-foreground truncate">
-                        {assignee.email}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
           <div className="flex gap-2 pt-4 border-t">
             <Button
               onClick={handleSave}
@@ -186,7 +159,6 @@ export function CardDetailSheet({ cardId, boardId, open, onOpenChange }: CardDet
           </div>
 
           <div className="text-xs text-muted-foreground pt-4 border-t">
-            <p>Created by {card.createdById}</p>
             <p>Created at {new Date(card.createdAt).toLocaleString()}</p>
             <p>Last updated {new Date(card.updatedAt).toLocaleString()}</p>
           </div>
