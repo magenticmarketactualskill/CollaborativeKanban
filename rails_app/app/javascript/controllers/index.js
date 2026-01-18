@@ -4,14 +4,20 @@
 
 import { application } from "./application"
 
-import HelloController from "./hello_controller"
-import KanbanController from "./kanban_controller"
-import DrawerController from "./drawer_controller"
 import DraggableController from "./draggable_controller"
-import LoadingProgressController from "./loading_progress_controller"
-
-application.register("hello", HelloController)
-application.register("kanban", KanbanController)
-application.register("drawer", DrawerController)
 application.register("draggable", DraggableController)
+
+import DrawerController from "./drawer_controller"
+application.register("drawer", DrawerController)
+
+import HelloController from "./hello_controller"
+application.register("hello", HelloController)
+
+import KanbanController from "./kanban_controller"
+application.register("kanban", KanbanController)
+
+import LoadingProgressController from "./loading_progress_controller"
 application.register("loading-progress", LoadingProgressController)
+
+import SettingsMenuController from "./settings_menu_controller"
+application.register("settings-menu", SettingsMenuController)

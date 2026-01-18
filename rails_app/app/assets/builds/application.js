@@ -8604,6 +8604,37 @@ var application = Application.start();
 application.debug = false;
 window.Stimulus = application;
 
+// app/javascript/controllers/draggable_controller.js
+var draggable_controller_default = class extends Controller {
+  static targets = ["item"];
+  connect() {
+    this.element.setAttribute("draggable", "true");
+  }
+};
+
+// app/javascript/controllers/drawer_controller.js
+var drawer_controller_default = class extends Controller {
+  static targets = ["panel"];
+  connect() {
+    this.boundHandleKeydown = this.handleKeydown.bind(this);
+    document.addEventListener("keydown", this.boundHandleKeydown);
+  }
+  disconnect() {
+    document.removeEventListener("keydown", this.boundHandleKeydown);
+  }
+  handleKeydown(event) {
+    if (event.key === "Escape") {
+      this.close();
+    }
+  }
+  close() {
+    const drawer = this.element.closest("#card-drawer");
+    if (drawer) {
+      drawer.classList.add("hidden");
+    }
+  }
+};
+
 // app/javascript/controllers/hello_controller.js
 var hello_controller_default = class extends Controller {
   connect() {
@@ -8762,42 +8793,186 @@ var kanban_controller_default = class extends Controller {
   }
 };
 
-// app/javascript/controllers/drawer_controller.js
-var drawer_controller_default = class extends Controller {
-  static targets = ["panel"];
+// app/javascript/controllers/loading_progress_controller.js
+var loading_progress_controller_default = class extends Controller {
+  static targets = ["tip"];
+  static values = {
+    current: { type: Number, default: 0 },
+    theme: { type: String, default: "blue" }
+  };
+  // Tips that cycle during loading to keep the UI feeling alive
+  analysisTips = [
+    "AI is analyzing your card content...",
+    "Evaluating complexity and estimating effort...",
+    "Identifying potential blockers...",
+    "Generating actionable subtasks...",
+    "Almost there, finalizing analysis..."
+  ];
+  suggestionTips = [
+    "AI is reviewing your card for improvements...",
+    "Looking for ways to enhance clarity...",
+    "Checking for missing details...",
+    "Generating actionable suggestions...",
+    "Polishing recommendations..."
+  ];
   connect() {
-    this.boundHandleKeydown = this.handleKeydown.bind(this);
-    document.addEventListener("keydown", this.boundHandleKeydown);
+    this.tipIndex = 0;
+    this.tipInterval = setInterval(() => this.cycleTip(), 3500);
+    this.pulseInterval = setInterval(() => this.pulseSkeleton(), 2e3);
   }
   disconnect() {
-    document.removeEventListener("keydown", this.boundHandleKeydown);
+    if (this.tipInterval) clearInterval(this.tipInterval);
+    if (this.pulseInterval) clearInterval(this.pulseInterval);
   }
-  handleKeydown(event) {
-    if (event.key === "Escape") {
-      this.close();
-    }
+  cycleTip() {
+    if (!this.hasTipTarget) return;
+    const tips = this.themeValue === "yellow" ? this.suggestionTips : this.analysisTips;
+    this.tipIndex = (this.tipIndex + 1) % tips.length;
+    this.tipTarget.style.transition = "opacity 0.3s ease-out";
+    this.tipTarget.style.opacity = "0";
+    setTimeout(() => {
+      this.tipTarget.textContent = tips[this.tipIndex];
+      this.tipTarget.style.opacity = "1";
+    }, 300);
   }
-  close() {
-    const drawer = this.element.closest("#card-drawer");
-    if (drawer) {
-      drawer.classList.add("hidden");
-    }
+  pulseSkeleton() {
+    const skeletons = this.element.querySelectorAll('[class*="animate-pulse"]');
+    skeletons.forEach((skeleton, index) => {
+      setTimeout(() => {
+        skeleton.style.transition = "transform 0.2s ease-out";
+        skeleton.style.transform = "scale(1.01)";
+        setTimeout(() => {
+          skeleton.style.transform = "scale(1)";
+        }, 200);
+      }, index * 50);
+    });
   }
 };
 
-// app/javascript/controllers/draggable_controller.js
-var draggable_controller_default = class extends Controller {
-  static targets = ["item"];
+// app/javascript/controllers/settings_menu_controller.js
+var settings_menu_controller_default = class extends Controller {
+  static targets = ["menu", "modal", "form"];
   connect() {
-    this.element.setAttribute("draggable", "true");
+    this.boundHandleKeydown = this.handleKeydown.bind(this);
+    this.boundHandleClickOutside = this.handleClickOutside.bind(this);
+    document.addEventListener("keydown", this.boundHandleKeydown);
+    document.addEventListener("click", this.boundHandleClickOutside);
+  }
+  disconnect() {
+    document.removeEventListener("keydown", this.boundHandleKeydown);
+    document.removeEventListener("click", this.boundHandleClickOutside);
+  }
+  handleKeydown(event) {
+    if (event.key === "Escape") {
+      this.closeMenu();
+      this.closeModal();
+    }
+  }
+  handleClickOutside(event) {
+    if (this.hasMenuTarget && !this.element.contains(event.target)) {
+      this.closeMenu();
+    }
+  }
+  toggleMenu() {
+    if (this.hasMenuTarget) {
+      this.menuTarget.classList.toggle("hidden");
+    }
+  }
+  closeMenu() {
+    if (this.hasMenuTarget) {
+      this.menuTarget.classList.add("hidden");
+    }
+  }
+  openModal() {
+    this.closeMenu();
+    if (this.hasModalTarget) {
+      this.modalTarget.classList.remove("hidden");
+    }
+  }
+  closeModal() {
+    if (this.hasModalTarget) {
+      this.modalTarget.classList.add("hidden");
+    }
+  }
+  selectProvider(event) {
+    const provider = event.currentTarget.dataset.provider;
+    const localSection = document.getElementById("local-llm-settings");
+    const remoteSection = document.getElementById("remote-api-settings");
+    const localTab = document.getElementById("local-tab");
+    const remoteTab = document.getElementById("remote-tab");
+    if (provider === "local") {
+      localSection.classList.remove("hidden");
+      remoteSection.classList.add("hidden");
+      localTab.classList.add("bg-blue-600", "text-white");
+      localTab.classList.remove("bg-gray-200", "text-gray-700");
+      remoteTab.classList.remove("bg-blue-600", "text-white");
+      remoteTab.classList.add("bg-gray-200", "text-gray-700");
+    } else {
+      remoteSection.classList.remove("hidden");
+      localSection.classList.add("hidden");
+      remoteTab.classList.add("bg-blue-600", "text-white");
+      remoteTab.classList.remove("bg-gray-200", "text-gray-700");
+      localTab.classList.remove("bg-blue-600", "text-white");
+      localTab.classList.add("bg-gray-200", "text-gray-700");
+    }
+  }
+  async testConnection(event) {
+    const button = event.currentTarget;
+    const originalText = button.textContent;
+    button.textContent = "Testing...";
+    button.disabled = true;
+    const formData = new FormData(this.formTarget);
+    try {
+      const response = await fetch("/settings/test_connection", {
+        method: "POST",
+        headers: {
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]').content
+        },
+        body: formData
+      });
+      const result = await response.json();
+      if (result.success) {
+        button.textContent = "Connected!";
+        button.classList.remove("bg-gray-600");
+        button.classList.add("bg-green-600");
+        setTimeout(() => {
+          button.textContent = originalText;
+          button.classList.remove("bg-green-600");
+          button.classList.add("bg-gray-600");
+          button.disabled = false;
+        }, 2e3);
+      } else {
+        button.textContent = "Failed";
+        button.classList.remove("bg-gray-600");
+        button.classList.add("bg-red-600");
+        setTimeout(() => {
+          button.textContent = originalText;
+          button.classList.remove("bg-red-600");
+          button.classList.add("bg-gray-600");
+          button.disabled = false;
+        }, 2e3);
+      }
+    } catch (error2) {
+      button.textContent = "Error";
+      button.classList.remove("bg-gray-600");
+      button.classList.add("bg-red-600");
+      setTimeout(() => {
+        button.textContent = originalText;
+        button.classList.remove("bg-red-600");
+        button.classList.add("bg-gray-600");
+        button.disabled = false;
+      }, 2e3);
+    }
   }
 };
 
 // app/javascript/controllers/index.js
+application.register("draggable", draggable_controller_default);
+application.register("drawer", drawer_controller_default);
 application.register("hello", hello_controller_default);
 application.register("kanban", kanban_controller_default);
-application.register("drawer", drawer_controller_default);
-application.register("draggable", draggable_controller_default);
+application.register("loading-progress", loading_progress_controller_default);
+application.register("settings-menu", settings_menu_controller_default);
 /*! Bundled license information:
 
 @hotwired/turbo/dist/turbo.es2017-esm.js:

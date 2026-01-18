@@ -4,6 +4,11 @@ Rails.application.routes.draw do
   post 'login', to: 'sessions#create'
   delete 'logout', to: 'sessions#destroy', as: :logout
 
+  # Settings
+  resource :settings, only: [:update] do
+    post :test_connection, on: :collection
+  end
+
   # Boards
   resources :boards do
     resources :columns, only: [:create, :update, :destroy] do

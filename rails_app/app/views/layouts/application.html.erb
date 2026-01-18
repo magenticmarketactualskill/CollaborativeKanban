@@ -36,6 +36,221 @@
                 </div>
               </div>
               <div class="flex items-center gap-4">
+                <!-- Settings Menu -->
+                <div class="relative" data-controller="settings-menu">
+                  <button type="button"
+                          data-action="click->settings-menu#toggleMenu"
+                          class="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full transition-colors"
+                          title="Settings">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                  </button>
+
+                  <!-- Dropdown Menu -->
+                  <div data-settings-menu-target="menu"
+                       class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-50">
+                    <div class="py-1">
+                      <button type="button"
+                              data-action="click->settings-menu#openModal"
+                              class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                        </svg>
+                        LLM Configuration
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Settings Modal -->
+                  <div data-settings-menu-target="modal"
+                       class="hidden fixed inset-0 z-50 overflow-y-auto">
+                    <div class="flex min-h-full items-center justify-center p-4">
+                      <!-- Backdrop -->
+                      <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+                           data-action="click->settings-menu#closeModal"></div>
+
+                      <!-- Modal Content -->
+                      <div class="relative bg-white rounded-lg shadow-xl max-w-2xl w-full">
+                        <div class="px-6 py-4 border-b border-gray-200">
+                          <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-semibold text-gray-900">LLM Configuration</h3>
+                            <button type="button"
+                                    data-action="click->settings-menu#closeModal"
+                                    class="text-gray-400 hover:text-gray-500">
+                              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                              </svg>
+                            </button>
+                          </div>
+                        </div>
+
+                        <%= form_with url: settings_path, method: :patch, data: { settings_menu_target: "form" }, class: "p-6" do |f| %>
+                          <!-- Provider Tabs -->
+                          <div class="flex gap-2 mb-6">
+                            <button type="button"
+                                    id="local-tab"
+                                    data-provider="local"
+                                    data-action="click->settings-menu#selectProvider"
+                                    class="px-4 py-2 rounded-md text-sm font-medium bg-blue-600 text-white">
+                              Local LLM
+                            </button>
+                            <button type="button"
+                                    id="remote-tab"
+                                    data-provider="remote"
+                                    data-action="click->settings-menu#selectProvider"
+                                    class="px-4 py-2 rounded-md text-sm font-medium bg-gray-200 text-gray-700">
+                              Remote API
+                            </button>
+                          </div>
+
+                          <!-- Local LLM Settings -->
+                          <div id="local-llm-settings" class="space-y-4">
+                            <div class="bg-blue-50 border border-blue-200 rounded-md p-4 mb-4">
+                              <div class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-blue-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <div class="text-sm text-blue-800">
+                                  <p class="font-medium">Local LLM Setup</p>
+                                  <p class="mt-1">Configure a local LLM server like Ollama, LM Studio, or LocalAI. The endpoint should be OpenAI-compatible.</p>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div>
+                              <label class="block text-sm font-medium text-gray-700 mb-1">Endpoint URL</label>
+                              <input type="url"
+                                     name="user_setting[local_endpoint]"
+                                     value="<%= current_user.user_setting&.local_endpoint || 'http://localhost:11434/v1' %>"
+                                     placeholder="http://localhost:11434/v1"
+                                     class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                              <p class="mt-1 text-xs text-gray-500">Common: Ollama (11434), LM Studio (1234), LocalAI (8080)</p>
+                            </div>
+
+                            <div>
+                              <label class="block text-sm font-medium text-gray-700 mb-1">Model Name</label>
+                              <input type="text"
+                                     name="user_setting[local_model]"
+                                     value="<%= current_user.user_setting&.local_model || 'llama3.2' %>"
+                                     placeholder="llama3.2"
+                                     class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                              <p class="mt-1 text-xs text-gray-500">E.g., llama3.2, mistral, codellama, phi3</p>
+                            </div>
+
+                            <div>
+                              <label class="block text-sm font-medium text-gray-700 mb-1">API Key (optional)</label>
+                              <input type="password"
+                                     name="user_setting[local_api_key]"
+                                     value="<%= current_user.user_setting&.local_api_key %>"
+                                     placeholder="Leave blank if not required"
+                                     class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            </div>
+                          </div>
+
+                          <!-- Remote API Settings -->
+                          <div id="remote-api-settings" class="hidden space-y-4">
+                            <div class="bg-purple-50 border border-purple-200 rounded-md p-4 mb-4">
+                              <div class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-purple-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <div class="text-sm text-purple-800">
+                                  <p class="font-medium">Remote API Setup</p>
+                                  <p class="mt-1">Connect to cloud-based LLM providers like OpenAI, Anthropic, or other OpenAI-compatible APIs.</p>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div>
+                              <label class="block text-sm font-medium text-gray-700 mb-1">Provider</label>
+                              <select name="user_setting[remote_provider]"
+                                      class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                <option value="openai" <%= 'selected' if current_user.user_setting&.remote_provider == 'openai' %>>OpenAI</option>
+                                <option value="anthropic" <%= 'selected' if current_user.user_setting&.remote_provider == 'anthropic' %>>Anthropic</option>
+                                <option value="openrouter" <%= 'selected' if current_user.user_setting&.remote_provider == 'openrouter' %>>OpenRouter</option>
+                                <option value="custom" <%= 'selected' if current_user.user_setting&.remote_provider == 'custom' %>>Custom Endpoint</option>
+                              </select>
+                            </div>
+
+                            <div>
+                              <label class="block text-sm font-medium text-gray-700 mb-1">API Key</label>
+                              <input type="password"
+                                     name="user_setting[remote_api_key]"
+                                     value="<%= current_user.user_setting&.remote_api_key %>"
+                                     placeholder="sk-..."
+                                     class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            </div>
+
+                            <div>
+                              <label class="block text-sm font-medium text-gray-700 mb-1">Custom Endpoint URL (for Custom provider)</label>
+                              <input type="url"
+                                     name="user_setting[remote_endpoint]"
+                                     value="<%= current_user.user_setting&.remote_endpoint %>"
+                                     placeholder="https://api.openai.com/v1"
+                                     class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            </div>
+
+                            <div>
+                              <label class="block text-sm font-medium text-gray-700 mb-1">Model</label>
+                              <input type="text"
+                                     name="user_setting[remote_model]"
+                                     value="<%= current_user.user_setting&.remote_model || 'gpt-4o-mini' %>"
+                                     placeholder="gpt-4o-mini"
+                                     class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                              <p class="mt-1 text-xs text-gray-500">E.g., gpt-4o, gpt-4o-mini, claude-3-sonnet, claude-3-haiku</p>
+                            </div>
+                          </div>
+
+                          <!-- Active Provider Selection -->
+                          <div class="mt-6 pt-6 border-t border-gray-200">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Active Provider</label>
+                            <div class="flex gap-4">
+                              <label class="flex items-center gap-2">
+                                <input type="radio"
+                                       name="user_setting[active_provider]"
+                                       value="local"
+                                       <%= 'checked' if current_user.user_setting&.active_provider == 'local' || current_user.user_setting.nil? %>
+                                       class="text-blue-600 focus:ring-blue-500">
+                                <span class="text-sm text-gray-700">Local LLM</span>
+                              </label>
+                              <label class="flex items-center gap-2">
+                                <input type="radio"
+                                       name="user_setting[active_provider]"
+                                       value="remote"
+                                       <%= 'checked' if current_user.user_setting&.active_provider == 'remote' %>
+                                       class="text-blue-600 focus:ring-blue-500">
+                                <span class="text-sm text-gray-700">Remote API</span>
+                              </label>
+                            </div>
+                          </div>
+
+                          <!-- Actions -->
+                          <div class="mt-6 flex justify-between">
+                            <button type="button"
+                                    data-action="click->settings-menu#testConnection"
+                                    class="px-4 py-2 text-sm font-medium text-white bg-gray-600 rounded-md hover:bg-gray-700">
+                              Test Connection
+                            </button>
+                            <div class="flex gap-3">
+                              <button type="button"
+                                      data-action="click->settings-menu#closeModal"
+                                      class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+                                Cancel
+                              </button>
+                              <button type="submit"
+                                      class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700">
+                                Save Settings
+                              </button>
+                            </div>
+                          </div>
+                        <% end %>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                 <span class="text-sm text-gray-700"><%= current_user.name %></span>
                 <div class="flex items-center justify-center w-8 h-8 rounded-full bg-blue-600 text-white text-sm font-medium">
                   <%= current_user.initials %>

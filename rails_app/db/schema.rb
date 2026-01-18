@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_18_220004) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_18_230001) do
   create_table "ai_suggestions", force: :cascade do |t|
     t.datetime "acted_at"
     t.integer "card_id", null: false
@@ -215,6 +215,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_18_220004) do
     t.index ["subject_entity_id"], name: "index_facts_on_subject_entity_id"
   end
 
+  create_table "user_settings", force: :cascade do |t|
+    t.string "active_provider", default: "local", null: false
+    t.datetime "created_at", null: false
+    t.string "local_api_key"
+    t.string "local_endpoint", default: "http://localhost:11434/v1"
+    t.string "local_model", default: "llama3.2"
+    t.string "remote_api_key"
+    t.string "remote_endpoint"
+    t.string "remote_model", default: "gpt-4o-mini"
+    t.string "remote_provider", default: "openai"
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["user_id"], name: "index_user_settings_on_user_id", unique: true
+  end
+
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email", null: false
@@ -256,4 +271,5 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_18_220004) do
   add_foreign_key "facts", "entities", column: "object_entity_id"
   add_foreign_key "facts", "entities", column: "subject_entity_id"
   add_foreign_key "facts", "users", column: "created_by_id"
+  add_foreign_key "user_settings", "users"
 end

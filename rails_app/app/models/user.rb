@@ -9,6 +9,7 @@ class User < ApplicationRecord
   has_many :card_assignments, dependent: :destroy
   has_many :assigned_cards, through: :card_assignments, source: :card
   has_many :board_activities, dependent: :destroy
+  has_one :user_setting, dependent: :destroy
 
   validates :name, presence: true
   validates :email, presence: true, uniqueness: true
