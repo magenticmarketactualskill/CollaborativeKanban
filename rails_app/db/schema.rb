@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_18_230005) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_18_230009) do
   create_table "ai_suggestions", force: :cascade do |t|
     t.datetime "acted_at"
     t.integer "card_id", null: false
@@ -288,6 +288,90 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_18_230005) do
     t.index ["status"], name: "index_llm_stages_on_status"
   end
 
+  create_table "mcp_client_connections", force: :cascade do |t|
+    t.string "auth_token"
+    t.string "auth_type", default: "none"
+    t.json "cached_prompts", default: []
+    t.json "cached_resources", default: []
+    t.json "cached_tools", default: []
+    t.datetime "created_at", null: false
+    t.boolean "enabled", default: true, null: false
+    t.datetime "last_connected_at"
+    t.text "last_error"
+    t.string "name", null: false
+    t.json "options", default: {}
+    t.string "status", default: "disconnected"
+    t.datetime "updated_at", null: false
+    t.string "url", null: false
+    t.integer "user_id"
+    t.index ["enabled"], name: "index_mcp_client_connections_on_enabled"
+    t.index ["status"], name: "index_mcp_client_connections_on_status"
+    t.index ["user_id", "name"], name: "index_mcp_client_connections_on_user_id_and_name", unique: true
+    t.index ["user_id"], name: "index_mcp_client_connections_on_user_id"
+  end
+
+  create_table "mcp_server_configurations", force: :cascade do |t|
+    t.string "auth_token"
+    t.string "auth_type", default: "none"
+    t.datetime "created_at", null: false
+    t.boolean "enabled", default: true, null: false
+    t.json "enabled_resources", default: []
+    t.json "enabled_tools", default: []
+    t.string "name", null: false
+    t.json "options", default: {}
+    t.integer "port", default: 3100
+    t.datetime "updated_at", null: false
+    t.integer "user_id"
+    t.index ["user_id"], name: "index_mcp_server_configurations_on_user_id", unique: true
+  end
+
+  create_table "mcp_tool_calls", force: :cascade do |t|
+    t.json "arguments", default: {}
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.string "direction", null: false
+    t.text "error_message"
+    t.integer "latency_ms"
+    t.integer "mcp_client_connection_id"
+    t.json "result"
+    t.datetime "started_at"
+    t.string "status", null: false
+    t.string "tool_name", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id"
+    t.index ["created_at"], name: "index_mcp_tool_calls_on_created_at"
+    t.index ["direction"], name: "index_mcp_tool_calls_on_direction"
+    t.index ["mcp_client_connection_id"], name: "index_mcp_tool_calls_on_mcp_client_connection_id"
+    t.index ["status"], name: "index_mcp_tool_calls_on_status"
+    t.index ["tool_name"], name: "index_mcp_tool_calls_on_tool_name"
+    t.index ["user_id"], name: "index_mcp_tool_calls_on_user_id"
+  end
+
+  create_table "skills", force: :cascade do |t|
+    t.string "category"
+    t.datetime "created_at", null: false
+    t.json "dependencies", default: []
+    t.text "description"
+    t.boolean "enabled", default: true, null: false
+    t.json "metadata", default: {}
+    t.string "name", null: false
+    t.json "parameters", default: []
+    t.text "prompt_template", null: false
+    t.string "slug", null: false
+    t.string "source"
+    t.string "source_file"
+    t.boolean "system_skill", default: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id"
+    t.string "version", default: "1.0.0"
+    t.json "workflow_steps", default: []
+    t.index ["category"], name: "index_skills_on_category"
+    t.index ["enabled"], name: "index_skills_on_enabled"
+    t.index ["system_skill"], name: "index_skills_on_system_skill"
+    t.index ["user_id", "slug"], name: "index_skills_on_user_id_and_slug", unique: true
+    t.index ["user_id"], name: "index_skills_on_user_id"
+  end
+
   create_table "user_settings", force: :cascade do |t|
     t.string "active_provider", default: "local", null: false
     t.datetime "created_at", null: false
@@ -347,5 +431,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_18_230005) do
   add_foreign_key "llm_calls", "llm_configurations"
   add_foreign_key "llm_configurations", "users"
   add_foreign_key "llm_stages", "llm_calls"
+  add_foreign_key "mcp_client_connections", "users"
+  add_foreign_key "mcp_server_configurations", "users"
+  add_foreign_key "mcp_tool_calls", "mcp_client_connections"
+  add_foreign_key "mcp_tool_calls", "users"
+  add_foreign_key "skills", "users"
   add_foreign_key "user_settings", "users"
 end

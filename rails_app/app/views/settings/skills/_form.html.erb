@@ -1,0 +1,86 @@
+<%= form_with model: @skill, url: (@skill.new_record? ? settings_skills_path : settings_skill_path(@skill)), class: "space-y-6" do |f| %>
+  <% if @skill.errors.any? %>
+    <div class="rounded-md bg-red-50 p-4">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd" />
+          </svg>
+        </div>
+        <div class="ml-3">
+          <h3 class="text-sm font-medium text-red-800">There were errors with your submission</h3>
+          <div class="mt-2 text-sm text-red-700">
+            <ul class="list-disc space-y-1 pl-5">
+              <% @skill.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="bg-white shadow rounded-lg p-6 space-y-4">
+    <h3 class="text-lg font-medium text-gray-900">Basic Information</h3>
+
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div>
+        <%= f.label :name, class: "block text-sm font-medium text-gray-700" %>
+        <%= f.text_field :name, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm", placeholder: "My Custom Skill" %>
+      </div>
+
+      <div>
+        <%= f.label :slug, class: "block text-sm font-medium text-gray-700" %>
+        <%= f.text_field :slug, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm font-mono", placeholder: "my-custom-skill" %>
+        <p class="mt-1 text-xs text-gray-500">Auto-generated from name if left blank</p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div>
+        <%= f.label :category, class: "block text-sm font-medium text-gray-700" %>
+        <%= f.select :category, Skill::CATEGORIES.map { |c| [c.titleize, c] }, { include_blank: "Select category..." }, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" %>
+      </div>
+
+      <div>
+        <%= f.label :version, class: "block text-sm font-medium text-gray-700" %>
+        <%= f.text_field :version, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm font-mono", placeholder: "1.0.0" %>
+      </div>
+    </div>
+
+    <div>
+      <%= f.label :description, class: "block text-sm font-medium text-gray-700" %>
+      <%= f.text_area :description, rows: 2, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm", placeholder: "A brief description of what this skill does..." %>
+    </div>
+
+    <div class="flex items-center">
+      <%= f.check_box :enabled, class: "h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" %>
+      <%= f.label :enabled, "Enabled", class: "ml-2 block text-sm text-gray-900" %>
+    </div>
+  </div>
+
+  <div class="bg-white shadow rounded-lg p-6 space-y-4">
+    <div class="flex items-center justify-between">
+      <h3 class="text-lg font-medium text-gray-900">Prompt Template</h3>
+      <span class="text-xs text-gray-500">Use {{parameter_name}} for variable substitution</span>
+    </div>
+
+    <div>
+      <%= f.text_area :prompt_template, rows: 12, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm font-mono", placeholder: "Enter your prompt template here...\n\nYou can use {{variables}} that will be replaced with parameter values.\n\nExample:\nAnalyze the following content:\n{{content}}\n\nProvide a {{depth}} analysis." %>
+    </div>
+  </div>
+
+  <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+    <h4 class="text-sm font-medium text-blue-900">Tip: Advanced Features</h4>
+    <p class="mt-1 text-sm text-blue-700">
+      For parameters and workflows, export this skill as a markdown file, edit it with YAML frontmatter, and re-import it.
+      The markdown format supports parameters with types, defaults, and multi-step workflows.
+    </p>
+  </div>
+
+  <div class="flex justify-end gap-3">
+    <%= link_to "Cancel", settings_skills_path, class: "inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" %>
+    <%= f.submit @skill.new_record? ? "Create Skill" : "Update Skill", class: "inline-flex items-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 cursor-pointer" %>
+  </div>
+<% end %>

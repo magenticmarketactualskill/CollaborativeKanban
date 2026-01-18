@@ -9,6 +9,32 @@ Rails.application.routes.draw do
     post :test_connection, on: :collection
   end
 
+  # Settings namespace for MCP and Skills
+  namespace :settings do
+    resource :mcp_server, only: [:show, :update] do
+      post :test_connection, on: :collection
+    end
+
+    resources :mcp_clients, only: [:index, :new, :create, :edit, :update, :destroy] do
+      member do
+        post :connect
+        post :disconnect
+        post :refresh_capabilities
+      end
+    end
+
+    resources :skills, only: [:index, :new, :create, :show, :edit, :update, :destroy] do
+      collection do
+        post :import
+        get :export_all
+      end
+      member do
+        get :export
+        post :execute
+      end
+    end
+  end
+
   # LLM Configurations
   resources :llm_configurations do
     member do

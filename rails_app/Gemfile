@@ -55,6 +55,10 @@ gem "json_schemer", "~> 2.2"
 # TaskFrame for multi-stage task lifecycle management
 gem "task-frame", git: "https://github.com/actual-skill/task-frame-ruby.git"
 
+# MCP Server/Client support
+gem "websocket-client-simple", "~> 0.8"
+gem "rubyzip", "~> 2.3"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
