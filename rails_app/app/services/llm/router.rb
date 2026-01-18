@@ -5,13 +5,13 @@ module Llm
     # Task categories and their preferred providers
     ROUTING_TABLE = {
       # Fast, simple tasks -> Ollama (local)
-      type_inference: { primary: :ollama, fallback: :claude, timeout: 10 },
+      type_inference: { primary: :ollama, fallback: :claude, timeout: 10, schema: :type_inference },
       classification: { primary: :ollama, fallback: :claude, timeout: 10 },
       extraction: { primary: :ollama, fallback: :claude, timeout: 15 },
 
       # Complex reasoning tasks -> Claude
-      analysis: { primary: :claude, fallback: :ollama, timeout: 45 },
-      suggestion: { primary: :claude, fallback: :ollama, timeout: 45 },
+      analysis: { primary: :claude, fallback: :ollama, timeout: 45, schema: :content_analysis },
+      suggestion: { primary: :claude, fallback: :ollama, timeout: 45, schema: :suggestions },
       schema_generation: { primary: :claude, fallback: nil, timeout: 60 },
       summarization: { primary: :claude, fallback: :ollama, timeout: 30 }
     }.freeze
@@ -25,12 +25,16 @@ module Llm
         client = client_for(routing[:primary])
         fallback_client = routing[:fallback] ? client_for(routing[:fallback]) : nil
 
+        # Use schema from routing table unless explicitly overridden
+        schema = options.key?(:schema) ? options[:schema] : routing[:schema]
+
         execute_with_fallback(
           client: client,
           fallback_client: fallback_client,
           prompt: prompt,
           timeout: routing[:timeout],
-          **options
+          schema: schema,
+          **options.except(:schema)
         )
       end
 
@@ -65,16 +69,18 @@ module Llm
 
       private
 
-      def execute_with_fallback(client:, fallback_client:, prompt:, timeout:, **options)
+      def execute_with_fallback(client:, fallback_client:, prompt:, timeout:, schema: nil, **options)
         return fallback_response unless client.available?
 
-        response = client.generate(prompt, timeout: timeout, **options)
+        client_options = { timeout: timeout, schema: schema, **options }.compact
+
+        response = client.generate(prompt, **client_options)
 
         if response.success?
           response
         elsif fallback_client&.available?
           Rails.logger.warn("LLM Router: Falling back from #{client.name} to #{fallback_client.name}")
-          fallback_client.generate(prompt, timeout: timeout, **options)
+          fallback_client.generate(prompt, **client_options)
         else
           response
         end
@@ -82,7 +88,7 @@ module Llm
         Rails.logger.error("LLM Router error: #{e.message}")
 
         if fallback_client&.available?
-          fallback_client.generate(prompt, timeout: timeout, **options)
+          fallback_client.generate(prompt, **client_options)
         else
           Llm::Response.new(
             content: nil,

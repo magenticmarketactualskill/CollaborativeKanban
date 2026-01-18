@@ -12,14 +12,7 @@ module CardIntelligence
       Title: %{title}
       Description: %{description}
 
-      You MUST respond with valid JSON matching this schema:
-      {
-        "card_type": string (required, lowercase with underscores only, e.g. "task", "bug", "checklist"),
-        "confidence": string (optional, one of: "high", "medium", "low"),
-        "reasoning": string (optional, max 500 chars, brief explanation)
-      }
-
-      Respond ONLY with valid JSON. No markdown, no code blocks, no explanation.
+      Determine the best matching card type and your confidence level.
     PROMPT
 
     def initialize

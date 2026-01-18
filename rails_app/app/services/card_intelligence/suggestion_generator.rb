@@ -16,18 +16,6 @@ module CardIntelligence
       1. Missing information that would be helpful based on the card type
       2. Ways to make the title/description clearer or more actionable
       3. Suggestions for breaking down complex tasks into subtasks
-
-      You MUST respond with a valid JSON array matching this schema:
-      [
-        {
-          "type": string (required, one of: "add_field", "improve_title", "add_subtask", "general"),
-          "field": string (optional, field name for add_field suggestions),
-          "suggestion": string (required, 1-1000 chars, the suggestion content)
-        }
-      ]
-      Array must have 1-5 items.
-
-      Respond ONLY with valid JSON array. No markdown, no code blocks, no explanation.
     PROMPT
 
     def generate(card)

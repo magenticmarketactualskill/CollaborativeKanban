@@ -11,17 +11,7 @@ module CardIntelligence
       Priority: %{priority}
       Due Date: %{due_date}
 
-      You MUST respond with valid JSON matching this exact schema:
-      {
-        "summary": string (required, 1-500 chars, one sentence summary),
-        "complexity_score": integer (required, 1-5),
-        "estimated_effort": string (required, one of: "low", "medium", "high"),
-        "potential_blockers": array of strings (optional, max 10 items),
-        "suggested_subtasks": array of strings (optional, max 10 items),
-        "related_topics": array of strings (optional, max 10 items)
-      }
-
-      Respond ONLY with valid JSON. No markdown, no code blocks, no explanation.
+      Provide a brief summary, assess complexity (1-5), estimate effort level, and identify any potential blockers, suggested subtasks, or related topics.
     PROMPT
 
     def analyze(card)

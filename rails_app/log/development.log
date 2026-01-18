@@ -1798,3 +1798,19 @@ DEPRECATION WARNING: ActiveSupport::Configurable is deprecated without replaceme
 
 You can emulate the previous behavior with `class_attribute`.
  (called from <main> at /Users/ericlaquer/Documents/GitHub/CollaborativeKanban/rails_app/config/environment.rb:5)
+DEPRECATION WARNING: ActiveSupport::Configurable is deprecated without replacement, and will be removed in Rails 8.2.
+
+You can emulate the previous behavior with `class_attribute`.
+ (called from <main> at /Users/ericlaquer/Documents/GitHub/CollaborativeKanban/rails_app/config/environment.rb:5)
+DEPRECATION WARNING: ActiveSupport::Configurable is deprecated without replacement, and will be removed in Rails 8.2.
+
+You can emulate the previous behavior with `class_attribute`.
+ (called from <main> at /Users/ericlaquer/Documents/GitHub/CollaborativeKanban/rails_app/config/environment.rb:5)
+DEPRECATION WARNING: ActiveSupport::Configurable is deprecated without replacement, and will be removed in Rails 8.2.
+
+You can emulate the previous behavior with `class_attribute`.
+ (called from <main> at /Users/ericlaquer/Documents/GitHub/CollaborativeKanban/rails_app/config/environment.rb:5)
+DEPRECATION WARNING: ActiveSupport::Configurable is deprecated without replacement, and will be removed in Rails 8.2.
+
+You can emulate the previous behavior with `class_attribute`.
+ (called from <main> at /Users/ericlaquer/Documents/GitHub/CollaborativeKanban/rails_app/config/environment.rb:5)

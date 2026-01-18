@@ -13,17 +13,10 @@ module Llm
     def generate(prompt, **options)
       model = options.fetch(:model, config[:model])
       start_time = Time.current
+      schema_name = options[:schema]
 
       response = @connection.post("/api/generate") do |req|
-        req.body = {
-          model: model,
-          prompt: prompt,
-          stream: false,
-          options: {
-            temperature: options.fetch(:temperature, 0.1),
-            num_predict: options.fetch(:max_tokens, 256)
-          }
-        }
+        req.body = build_request_body(prompt, model, schema_name, options)
       end
 
       latency = Time.current - start_time
@@ -62,6 +55,25 @@ module Llm
     end
 
     private
+
+    def build_request_body(prompt, model, schema_name, options)
+      body = {
+        model: model,
+        prompt: prompt,
+        stream: false,
+        options: {
+          temperature: options.fetch(:temperature, 0.1),
+          num_predict: options.fetch(:max_tokens, 256)
+        }
+      }
+
+      if schema_name
+        schema = Llm::SchemaValidator.schema_for(schema_name)
+        body[:format] = schema.except("$schema", "title", "description")
+      end
+
+      body
+    end
 
     def host
       config[:host] || ENV.fetch("OLLAMA_HOST", DEFAULT_HOST)
