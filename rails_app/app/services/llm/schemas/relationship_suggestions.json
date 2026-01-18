@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RelationshipSuggestions",
+  "description": "Schema for card relationship detection LLM response",
+  "type": "object",
+  "properties": {
+    "relationships": {
+      "type": "array",
+      "description": "List of detected relationships",
+      "items": {
+        "type": "object",
+        "properties": {
+          "target_card_id": {
+            "type": "integer",
+            "description": "ID of the related card"
+          },
+          "relationship_type": {
+            "type": "string",
+            "description": "Type of relationship",
+            "enum": ["blocks", "depends_on", "related_to"]
+          },
+          "confidence": {
+            "type": "string",
+            "description": "Confidence level of the suggestion",
+            "enum": ["high", "medium", "low"]
+          },
+          "reasoning": {
+            "type": "string",
+            "description": "Brief explanation for why this relationship was detected",
+            "maxLength": 500
+          }
+        },
+        "required": ["target_card_id", "relationship_type"],
+        "additionalProperties": false
+      },
+      "maxItems": 10
+    }
+  },
+  "required": ["relationships"],
+  "additionalProperties": false
+}

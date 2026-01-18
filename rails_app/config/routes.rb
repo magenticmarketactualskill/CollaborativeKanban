@@ -26,6 +26,12 @@ Rails.application.routes.draw do
           delete :dismiss
         end
       end
+
+      resources :card_relationships, only: [:index, :create, :destroy] do
+        collection do
+          post :detect
+        end
+      end
     end
 
     resources :board_members, only: [:index, :create, :update, :destroy]

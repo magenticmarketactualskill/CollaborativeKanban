@@ -13,7 +13,8 @@ module Llm
       analysis: { primary: :claude, fallback: :ollama, timeout: 45, schema: :content_analysis },
       suggestion: { primary: :claude, fallback: :ollama, timeout: 45, schema: :suggestions },
       schema_generation: { primary: :claude, fallback: nil, timeout: 60 },
-      summarization: { primary: :claude, fallback: :ollama, timeout: 30 }
+      summarization: { primary: :claude, fallback: :ollama, timeout: 30 },
+      relationship_detection: { primary: :claude, fallback: :ollama, timeout: 60, schema: :relationship_suggestions }
     }.freeze
 
     class << self

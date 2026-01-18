@@ -1814,3 +1814,50 @@ DEPRECATION WARNING: ActiveSupport::Configurable is deprecated without replaceme
 
 You can emulate the previous behavior with `class_attribute`.
  (called from <main> at /Users/ericlaquer/Documents/GitHub/CollaborativeKanban/rails_app/config/environment.rb:5)
+DEPRECATION WARNING: ActiveSupport::Configurable is deprecated without replacement, and will be removed in Rails 8.2.
+
+You can emulate the previous behavior with `class_attribute`.
+ (called from <main> at /Users/ericlaquer/Documents/GitHub/CollaborativeKanban/rails_app/config/environment.rb:5)
+DEPRECATION WARNING: ActiveSupport::Configurable is deprecated without replacement, and will be removed in Rails 8.2.
+
+You can emulate the previous behavior with `class_attribute`.
+ (called from <main> at /Users/ericlaquer/Documents/GitHub/CollaborativeKanban/rails_app/config/environment.rb:5)
+DEPRECATION WARNING: ActiveSupport::Configurable is deprecated without replacement, and will be removed in Rails 8.2.
+
+You can emulate the previous behavior with `class_attribute`.
+ (called from <main> at /Users/ericlaquer/Documents/GitHub/CollaborativeKanban/rails_app/config/environment.rb:5)
+  [1m[36mActiveRecord::InternalMetadata Load (0.7ms)[0m  [1m[34mSELECT * FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = 'environment' ORDER BY "ar_internal_metadata"."key" ASC LIMIT 1 /*application='RailsApp'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.0ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='RailsApp'*/[0m
+Migrating to CreateCardRelationships (20260118200000)
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='RailsApp'*/[0m
+  [1m[35m (0.6ms)[0m  [1m[35mCREATE TABLE "card_relationships" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "source_card_id" integer NOT NULL, "target_card_id" integer NOT NULL, "relationship_type" varchar NOT NULL, "created_by_id" integer, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_524f57c10c"
+FOREIGN KEY ("source_card_id")
+  REFERENCES "cards" ("id")
+, CONSTRAINT "fk_rails_970ce7f56f"
+FOREIGN KEY ("target_card_id")
+  REFERENCES "cards" ("id")
+, CONSTRAINT "fk_rails_abda762717"
+FOREIGN KEY ("created_by_id")
+  REFERENCES "users" ("id")
+) /*application='RailsApp'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_card_relationships_on_source_card_id" ON "card_relationships" ("source_card_id") /*application='RailsApp'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_card_relationships_on_target_card_id" ON "card_relationships" ("target_card_id") /*application='RailsApp'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_card_relationships_on_created_by_id" ON "card_relationships" ("created_by_id") /*application='RailsApp'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE UNIQUE INDEX "idx_card_relationships_unique" ON "card_relationships" ("source_card_id", "target_card_id", "relationship_type") /*application='RailsApp'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_card_relationships_on_relationship_type" ON "card_relationships" ("relationship_type") /*application='RailsApp'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.0ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20260118200000') RETURNING "version" /*application='RailsApp'*/[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='RailsApp'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.0ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='RailsApp'*/[0m
+DEPRECATION WARNING: ActiveSupport::Configurable is deprecated without replacement, and will be removed in Rails 8.2.
+
+You can emulate the previous behavior with `class_attribute`.
+ (called from <main> at /Users/ericlaquer/Documents/GitHub/CollaborativeKanban/rails_app/config/environment.rb:5)
+DEPRECATION WARNING: ActiveSupport::Configurable is deprecated without replacement, and will be removed in Rails 8.2.
+
+You can emulate the previous behavior with `class_attribute`.
+ (called from <main> at /Users/ericlaquer/Documents/GitHub/CollaborativeKanban/rails_app/config/environment.rb:5)
+  [1m[36mCardRelationship Count (2.7ms)[0m  [1m[34mSELECT COUNT(*) FROM "card_relationships" /*application='RailsApp'*/[0m
+DEPRECATION WARNING: ActiveSupport::Configurable is deprecated without replacement, and will be removed in Rails 8.2.
+
+You can emulate the previous behavior with `class_attribute`.
+ (called from <main> at /Users/ericlaquer/Documents/GitHub/CollaborativeKanban/rails_app/config/environment.rb:5)

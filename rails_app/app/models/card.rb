@@ -9,6 +9,16 @@ class Card < ApplicationRecord
   has_many :assignees, through: :card_assignments, source: :user
   has_many :ai_suggestions, dependent: :destroy
 
+  # Card relationships
+  has_many :outgoing_relationships,
+           class_name: 'CardRelationship',
+           foreign_key: :source_card_id,
+           dependent: :destroy
+  has_many :incoming_relationships,
+           class_name: 'CardRelationship',
+           foreign_key: :target_card_id,
+           dependent: :destroy
+
   validates :title, presence: true
   validates :priority, inclusion: { in: PRIORITIES }
   validates :position, numericality: { greater_than_or_equal_to: 0 }
@@ -121,6 +131,57 @@ class Card < ApplicationRecord
 
   def has_pending_suggestions?
     ai_suggestions.pending.exists?
+  end
+
+  # Relationship query methods
+  def blocks
+    Card.joins(:incoming_relationships)
+        .where(card_relationships: { source_card_id: id, relationship_type: 'blocks' })
+  end
+
+  def blocked_by
+    Card.joins(:outgoing_relationships)
+        .where(card_relationships: { target_card_id: id, relationship_type: 'blocks' })
+  end
+
+  def depends_on
+    Card.joins(:incoming_relationships)
+        .where(card_relationships: { source_card_id: id, relationship_type: 'depends_on' })
+  end
+
+  def dependencies
+    Card.joins(:outgoing_relationships)
+        .where(card_relationships: { target_card_id: id, relationship_type: 'depends_on' })
+  end
+
+  def related_cards
+    outgoing_ids = outgoing_relationships.related.pluck(:target_card_id)
+    incoming_ids = incoming_relationships.related.pluck(:source_card_id)
+    Card.where(id: (outgoing_ids + incoming_ids).uniq)
+  end
+
+  def all_relationships
+    outgoing_relationships + incoming_relationships
+  end
+
+  def has_blockers?
+    blocked_by.exists?
+  end
+
+  def blocking_status
+    return :blocked if has_blockers?
+    return :blocking if blocks.exists?
+    :clear
+  end
+
+  def generate_relationship_suggestions!
+    detector = CardIntelligence::RelationshipDetector.new
+    suggestions = detector.detect(self)
+
+    ai_suggestions.pending.where(suggestion_type: 'add_relationship').destroy_all
+    suggestions.each(&:save!)
+
+    suggestions
   end
 
   private

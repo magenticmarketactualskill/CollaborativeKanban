@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_18_153454) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_18_200000) do
   create_table "ai_suggestions", force: :cascade do |t|
     t.datetime "acted_at"
     t.integer "card_id", null: false
@@ -74,6 +74,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_18_153454) do
     t.index ["user_id"], name: "index_card_assignments_on_user_id"
   end
 
+  create_table "card_relationships", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "created_by_id"
+    t.string "relationship_type", null: false
+    t.integer "source_card_id", null: false
+    t.integer "target_card_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_by_id"], name: "index_card_relationships_on_created_by_id"
+    t.index ["relationship_type"], name: "index_card_relationships_on_relationship_type"
+    t.index ["source_card_id", "target_card_id", "relationship_type"], name: "idx_card_relationships_unique", unique: true
+    t.index ["source_card_id"], name: "index_card_relationships_on_source_card_id"
+    t.index ["target_card_id"], name: "index_card_relationships_on_target_card_id"
+  end
+
   create_table "cards", force: :cascade do |t|
     t.datetime "ai_analyzed_at"
     t.text "ai_summary"
@@ -131,6 +145,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_18_153454) do
   add_foreign_key "boards", "users", column: "owner_id"
   add_foreign_key "card_assignments", "cards"
   add_foreign_key "card_assignments", "users"
+  add_foreign_key "card_relationships", "cards", column: "source_card_id"
+  add_foreign_key "card_relationships", "cards", column: "target_card_id"
+  add_foreign_key "card_relationships", "users", column: "created_by_id"
   add_foreign_key "cards", "boards"
   add_foreign_key "cards", "columns"
   add_foreign_key "cards", "users", column: "created_by_id"
