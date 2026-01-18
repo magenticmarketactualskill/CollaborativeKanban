@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_18_230002) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_18_230004) do
   create_table "ai_suggestions", force: :cascade do |t|
     t.datetime "acted_at"
     t.integer "card_id", null: false
@@ -215,6 +215,31 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_18_230002) do
     t.index ["subject_entity_id"], name: "index_facts_on_subject_entity_id"
   end
 
+  create_table "llm_calls", force: :cascade do |t|
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.text "error_message"
+    t.integer "input_tokens"
+    t.integer "latency_ms"
+    t.integer "llm_configuration_id", null: false
+    t.json "metadata", default: {}
+    t.string "model"
+    t.integer "output_tokens"
+    t.text "prompt"
+    t.string "provider"
+    t.text "response_content"
+    t.datetime "started_at"
+    t.string "status", default: "pending", null: false
+    t.string "task_type", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_llm_calls_on_created_at"
+    t.index ["llm_configuration_id", "status"], name: "index_llm_calls_on_llm_configuration_id_and_status"
+    t.index ["llm_configuration_id"], name: "index_llm_calls_on_llm_configuration_id"
+    t.index ["provider"], name: "index_llm_calls_on_provider"
+    t.index ["status"], name: "index_llm_calls_on_status"
+    t.index ["task_type"], name: "index_llm_calls_on_task_type"
+  end
+
   create_table "llm_configurations", force: :cascade do |t|
     t.boolean "active", default: true, null: false
     t.string "api_key"
@@ -233,6 +258,30 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_18_230002) do
     t.index ["provider_type"], name: "index_llm_configurations_on_provider_type"
     t.index ["user_id", "name"], name: "index_llm_configurations_on_user_id_and_name", unique: true
     t.index ["user_id"], name: "index_llm_configurations_on_user_id"
+  end
+
+  create_table "llm_stages", force: :cascade do |t|
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.text "error_message"
+    t.integer "input_tokens"
+    t.integer "latency_ms"
+    t.integer "llm_call_id", null: false
+    t.json "metadata", default: {}
+    t.string "name", null: false
+    t.integer "output_tokens"
+    t.integer "position", default: 0, null: false
+    t.text "prompt"
+    t.text "response_content"
+    t.string "stage_type"
+    t.datetime "started_at"
+    t.string "status", default: "pending", null: false
+    t.datetime "updated_at", null: false
+    t.index ["llm_call_id", "position"], name: "index_llm_stages_on_llm_call_id_and_position"
+    t.index ["llm_call_id"], name: "index_llm_stages_on_llm_call_id"
+    t.index ["name"], name: "index_llm_stages_on_name"
+    t.index ["stage_type"], name: "index_llm_stages_on_stage_type"
+    t.index ["status"], name: "index_llm_stages_on_status"
   end
 
   create_table "user_settings", force: :cascade do |t|
@@ -291,6 +340,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_18_230002) do
   add_foreign_key "facts", "entities", column: "object_entity_id"
   add_foreign_key "facts", "entities", column: "subject_entity_id"
   add_foreign_key "facts", "users", column: "created_by_id"
+  add_foreign_key "llm_calls", "llm_configurations"
   add_foreign_key "llm_configurations", "users"
+  add_foreign_key "llm_stages", "llm_calls"
   add_foreign_key "user_settings", "users"
 end

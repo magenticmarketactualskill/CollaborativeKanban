@@ -2,6 +2,8 @@ class LlmConfiguration < ApplicationRecord
   PROVIDER_TYPES = %w[openai anthropic ollama openrouter custom].freeze
 
   belongs_to :user, optional: true
+  has_many :llm_calls, dependent: :destroy
+  has_many :llm_stages, through: :llm_calls
 
   validates :name, presence: true
   validates :provider_type, presence: true, inclusion: { in: PROVIDER_TYPES }

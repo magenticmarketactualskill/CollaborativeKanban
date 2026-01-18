@@ -9,6 +9,14 @@ Rails.application.routes.draw do
     post :test_connection, on: :collection
   end
 
+  # LLM Configurations
+  resources :llm_configurations do
+    member do
+      post :test_connection
+      post :set_default
+    end
+  end
+
   # Boards
   resources :boards do
     resources :columns, only: [:create, :update, :destroy] do
