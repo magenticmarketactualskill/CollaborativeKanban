@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_18_230001) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_18_230002) do
   create_table "ai_suggestions", force: :cascade do |t|
     t.datetime "acted_at"
     t.integer "card_id", null: false
@@ -215,6 +215,26 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_18_230001) do
     t.index ["subject_entity_id"], name: "index_facts_on_subject_entity_id"
   end
 
+  create_table "llm_configurations", force: :cascade do |t|
+    t.boolean "active", default: true, null: false
+    t.string "api_key"
+    t.datetime "created_at", null: false
+    t.boolean "default_for_type", default: false, null: false
+    t.string "endpoint"
+    t.string "model", null: false
+    t.string "name", null: false
+    t.json "options", default: {}
+    t.integer "priority", default: 0, null: false
+    t.string "provider_type", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id"
+    t.index ["active"], name: "index_llm_configurations_on_active"
+    t.index ["provider_type", "default_for_type"], name: "index_llm_configurations_on_provider_type_and_default_for_type", unique: true, where: "default_for_type = true"
+    t.index ["provider_type"], name: "index_llm_configurations_on_provider_type"
+    t.index ["user_id", "name"], name: "index_llm_configurations_on_user_id_and_name", unique: true
+    t.index ["user_id"], name: "index_llm_configurations_on_user_id"
+  end
+
   create_table "user_settings", force: :cascade do |t|
     t.string "active_provider", default: "local", null: false
     t.datetime "created_at", null: false
@@ -271,5 +291,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_18_230001) do
   add_foreign_key "facts", "entities", column: "object_entity_id"
   add_foreign_key "facts", "entities", column: "subject_entity_id"
   add_foreign_key "facts", "users", column: "created_by_id"
+  add_foreign_key "llm_configurations", "users"
   add_foreign_key "user_settings", "users"
 end

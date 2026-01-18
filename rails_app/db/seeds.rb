@@ -1,3 +1,8 @@
+# Setup LLM configurations
+puts "Setting up LLM configurations..."
+LlmConfig::Setup.call
+puts "Created #{LlmConfiguration.count} LLM configurations"
+
 # Create sample users
 puts "Creating users..."
 
