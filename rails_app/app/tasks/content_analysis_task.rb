@@ -3,7 +3,7 @@
 class ContentAnalysisTask < ApplicationTask
   # Stage indices for progress tracking
   STAGE_VALIDATING = 0
-  STAGE_ANALYZING = 1
+  STAGE_LLM = 1
   STAGE_PROCESSING = 2
   STAGE_SAVING = 3
 
@@ -44,7 +44,7 @@ class ContentAnalysisTask < ApplicationTask
       card = result.value![:card]
 
       # Broadcast that we're moving to the analyzing stage
-      task.broadcast_stage_progress(ContentAnalysisTask::STAGE_ANALYZING)
+      task.broadcast_stage_progress(ContentAnalysisTask::STAGE_LLM)
 
       Success(
         card: card,

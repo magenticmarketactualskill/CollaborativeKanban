@@ -3,7 +3,7 @@
 class SuggestionGenerationTask < ApplicationTask
   # Stage indices for progress tracking
   STAGE_PREPARING = 0
-  STAGE_GENERATING = 1
+  STAGE_LLM = 1
   STAGE_PROCESSING = 2
   STAGE_SAVING = 3
 
@@ -45,7 +45,7 @@ class SuggestionGenerationTask < ApplicationTask
       schema = CardSchemas::Registry.instance.schema_for_card(card)
 
       # Broadcast that we're moving to the generating stage
-      task.broadcast_stage_progress(SuggestionGenerationTask::STAGE_GENERATING)
+      task.broadcast_stage_progress(SuggestionGenerationTask::STAGE_LLM)
 
       Success(
         card: card,

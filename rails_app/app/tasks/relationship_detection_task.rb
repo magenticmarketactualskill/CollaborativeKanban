@@ -3,7 +3,7 @@
 class RelationshipDetectionTask < ApplicationTask
   # Stage indices for progress tracking
   STAGE_PREPARING = 0
-  STAGE_ANALYZING = 1
+  STAGE_LLM = 1
   STAGE_PROCESSING = 2
   STAGE_SAVING = 3
 
@@ -47,7 +47,7 @@ class RelationshipDetectionTask < ApplicationTask
         return Failure(error: "No other cards on board to analyze", stage: name)
       end
 
-      task.broadcast_stage_progress(RelationshipDetectionTask::STAGE_ANALYZING)
+      task.broadcast_stage_progress(RelationshipDetectionTask::STAGE_LLM)
 
       Success(
         card: card,
