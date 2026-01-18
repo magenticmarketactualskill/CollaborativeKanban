@@ -1706,3 +1706,83 @@ DEPRECATION WARNING: ActiveSupport::Configurable is deprecated without replaceme
 
 You can emulate the previous behavior with `class_attribute`.
  (called from <main> at /Users/ericlaquer/Documents/GitHub/CollaborativeKanban/rails_app/config/environment.rb:5)
+DEPRECATION WARNING: ActiveSupport::Configurable is deprecated without replacement, and will be removed in Rails 8.2.
+
+You can emulate the previous behavior with `class_attribute`.
+ (called from <main> at /Users/ericlaquer/Documents/GitHub/CollaborativeKanban/rails_app/config/environment.rb:5)
+DEPRECATION WARNING: ActiveSupport::Configurable is deprecated without replacement, and will be removed in Rails 8.2.
+
+You can emulate the previous behavior with `class_attribute`.
+ (called from <main> at /Users/ericlaquer/Documents/GitHub/CollaborativeKanban/rails_app/config/environment.rb:5)
+DEPRECATION WARNING: ActiveSupport::Configurable is deprecated without replacement, and will be removed in Rails 8.2.
+
+You can emulate the previous behavior with `class_attribute`.
+ (called from <main> at /Users/ericlaquer/Documents/GitHub/CollaborativeKanban/rails_app/config/environment.rb:5)
+DEPRECATION WARNING: ActiveSupport::Configurable is deprecated without replacement, and will be removed in Rails 8.2.
+
+You can emulate the previous behavior with `class_attribute`.
+ (called from <main> at /Users/ericlaquer/Documents/GitHub/CollaborativeKanban/rails_app/config/environment.rb:5)
+DEPRECATION WARNING: ActiveSupport::Configurable is deprecated without replacement, and will be removed in Rails 8.2.
+
+You can emulate the previous behavior with `class_attribute`.
+ (called from <main> at /Users/ericlaquer/Documents/GitHub/CollaborativeKanban/rails_app/config/environment.rb:5)
+  [1m[36mBoard Load (0.1ms)[0m  [1m[34mSELECT "boards".* FROM "boards" ORDER BY "boards"."id" ASC LIMIT 1 /*application='RailsApp'*/[0m
+  [1m[36mColumn Load (0.0ms)[0m  [1m[34mSELECT "columns".* FROM "columns" WHERE "columns"."board_id" = 1 ORDER BY "columns"."position" ASC LIMIT 1 /*application='RailsApp'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='RailsApp'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION /*application='RailsApp'*/[0m
+DEPRECATION WARNING: ActiveSupport::Configurable is deprecated without replacement, and will be removed in Rails 8.2.
+
+You can emulate the previous behavior with `class_attribute`.
+ (called from <main> at /Users/ericlaquer/Documents/GitHub/CollaborativeKanban/rails_app/config/environment.rb:5)
+  [1m[36mUser Load (0.1ms)[0m  [1m[34mSELECT "users".* FROM "users" ORDER BY "users"."id" ASC LIMIT 1 /*application='RailsApp'*/[0m
+  [1m[36mBoard Load (0.0ms)[0m  [1m[34mSELECT "boards".* FROM "boards" ORDER BY "boards"."id" ASC LIMIT 1 /*application='RailsApp'*/[0m
+  [1m[36mColumn Load (0.0ms)[0m  [1m[34mSELECT "columns".* FROM "columns" WHERE "columns"."board_id" = 1 ORDER BY "columns"."position" ASC LIMIT 1 /*application='RailsApp'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='RailsApp'*/[0m
+  [1m[36mCard Create (0.7ms)[0m  [1m[32mINSERT INTO "cards" ("board_id", "column_id", "title", "description", "priority", "position", "due_date", "created_by_id", "created_at", "updated_at", "card_type", "type_inference_confidence", "type_inferred_at", "card_metadata", "ai_summary", "ai_analyzed_at") VALUES (1, 1, 'Fix login bug', 'Users cannot login after password reset', 'medium', 0, NULL, 1, '2026-01-18 15:54:17.658765', '2026-01-18 15:54:17.658765', 'task', NULL, NULL, '{}', NULL, NULL) RETURNING "id" /*application='RailsApp'*/[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='RailsApp'*/[0m
+[ActiveJob] Enqueued CardTypeInferenceJob (Job ID: cc798573-7c33-4dc1-ac49-92a1d309301d) to Async(default) with arguments: 9
+[ActiveJob] ↳ app/models/card.rb:139:in 'Card#infer_card_type_async'
+  [1m[36mCard Load (0.1ms)[0m  [1m[34mSELECT "cards".* FROM "cards" WHERE "cards"."id" = 9 LIMIT 1 /*application='RailsApp'*/[0m
+  ↳ app/tasks/concerns/finds_card.rb:11:in 'FindsCard#find_card'
+DEPRECATION WARNING: ActiveSupport::Configurable is deprecated without replacement, and will be removed in Rails 8.2.
+
+You can emulate the previous behavior with `class_attribute`.
+ (called from <main> at /Users/ericlaquer/Documents/GitHub/CollaborativeKanban/rails_app/config/environment.rb:5)
+  [1m[36mUser Load (0.1ms)[0m  [1m[34mSELECT "users".* FROM "users" ORDER BY "users"."id" ASC LIMIT 1 /*application='RailsApp'*/[0m
+  [1m[36mBoard Load (0.0ms)[0m  [1m[34mSELECT "boards".* FROM "boards" ORDER BY "boards"."id" ASC LIMIT 1 /*application='RailsApp'*/[0m
+  [1m[36mColumn Load (0.0ms)[0m  [1m[34mSELECT "columns".* FROM "columns" WHERE "columns"."board_id" = 1 ORDER BY "columns"."position" ASC LIMIT 1 /*application='RailsApp'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='RailsApp'*/[0m
+  [1m[36mCard Create (0.5ms)[0m  [1m[32mINSERT INTO "cards" ("board_id", "column_id", "title", "description", "priority", "position", "due_date", "created_by_id", "created_at", "updated_at", "card_type", "type_inference_confidence", "type_inferred_at", "card_metadata", "ai_summary", "ai_analyzed_at") VALUES (1, 1, 'Fix login bug', 'Users cannot login after password reset', 'medium', 0, NULL, 1, '2026-01-18 15:54:26.654699', '2026-01-18 15:54:26.654699', 'task', NULL, NULL, '{}', NULL, NULL) RETURNING "id" /*application='RailsApp'*/[0m
+  [1m[36mTRANSACTION (0.4ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='RailsApp'*/[0m
+[ActiveJob] Enqueued CardTypeInferenceJob (Job ID: 4b539205-9220-4c4e-8973-9570a30b712b) to Async(default) with arguments: 10
+[ActiveJob] ↳ app/models/card.rb:139:in 'Card#infer_card_type_async'
+  [1m[36mCard Load (0.1ms)[0m  [1m[34mSELECT "cards".* FROM "cards" WHERE "cards"."id" = 10 LIMIT 1 /*application='RailsApp'*/[0m
+  ↳ app/tasks/concerns/finds_card.rb:11:in 'FindsCard#find_card'
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='RailsApp'*/[0m
+  ↳ app/tasks/type_inference_task.rb:181:in 'TypeInferenceTask::UpdateCard#perform_work'
+  [1m[36mCard Update (0.3ms)[0m  [1m[33mUPDATE "cards" SET "updated_at" = '2026-01-18 15:54:26.664326', "card_type" = 'bug', "type_inference_confidence" = 'high', "type_inferred_at" = '2026-01-18 15:54:26.664149' WHERE "cards"."id" = 10 /*application='RailsApp'*/[0m
+  ↳ app/tasks/type_inference_task.rb:181:in 'TypeInferenceTask::UpdateCard#perform_work'
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='RailsApp'*/[0m
+  ↳ app/tasks/type_inference_task.rb:181:in 'TypeInferenceTask::UpdateCard#perform_work'
+  [1m[36mBoard Load (0.0ms)[0m  [1m[34mSELECT "boards".* FROM "boards" WHERE "boards"."id" = 1 LIMIT 1 /*application='RailsApp'*/[0m
+  ↳ app/tasks/type_inference_task.rb:206:in 'TypeInferenceTask::Broadcast#perform_work'
+[ActiveJob] [CardTypeInferenceJob] [4b539205-9220-4c4e-8973-9570a30b712b] Performing CardTypeInferenceJob (Job ID: 4b539205-9220-4c4e-8973-9570a30b712b) from Async(default) enqueued at 2026-01-18T15:54:26.660916000Z with arguments: 10
+[ActiveJob] [CardTypeInferenceJob] [4b539205-9220-4c4e-8973-9570a30b712b]   [1m[36mCard Load (0.1ms)[0m  [1m[34mSELECT "cards".* FROM "cards" WHERE "cards"."id" = 10 LIMIT 1 /*application='RailsApp',job='CardTypeInferenceJob'*/[0m
+[ActiveJob] [CardTypeInferenceJob] [4b539205-9220-4c4e-8973-9570a30b712b]   ↳ app/tasks/concerns/finds_card.rb:11:in 'FindsCard#find_card'
+[ActiveJob] [CardTypeInferenceJob] [4b539205-9220-4c4e-8973-9570a30b712b] Error performing CardTypeInferenceJob (Job ID: 4b539205-9220-4c4e-8973-9570a30b712b) from Async(default) in 0.8ms: Dry::Monads::UnwrapError (value! was called on Failure({error: "Already inferred with high confidence", skipped: true, card_id: 10, stage: "typeinferencetask::validateinput"})):
+app/jobs/card_type_inference_job.rb:9:in 'block in CardTypeInferenceJob#perform'
+app/jobs/card_type_inference_job.rb:9:in 'CardTypeInferenceJob#perform'
+  [1m[36mUser Exists? (0.0ms)[0m  [1m[34mSELECT 1 AS one FROM "users" INNER JOIN "card_assignments" ON "users"."id" = "card_assignments"."user_id" WHERE "card_assignments"."card_id" = 10 LIMIT 1 /*application='RailsApp'*/[0m
+  ↳ app/components/cards/bug_card_component.html.erb:59:in 'Cards::BugCardComponent#call'
+  Rendered boards/_card.html.erb (Duration: 6.0ms | GC: 0.0ms)
+[ActionCable] Broadcasting to board_1: "<turbo-stream action=\"replace\" target=\"card-10\"><template><!-- BEGIN app/views/boards/_card.html.erb\n--><!-- BEGIN app/components/cards/bug_card_component.html.erb\n--><div id=\"card-10\"\n     class=\"kanban-card bg-white rounded-lg shadow-sm p-3 cursor-pointer hover:shadow-md transition-s...
+  [1m[36mCard Load (0.0ms)[0m  [1m[34mSELECT "cards".* FROM "cards" WHERE "cards"."id" = 10 LIMIT 1 /*application='RailsApp'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='RailsApp'*/[0m
+  [1m[36mCardAssignment Load (0.0ms)[0m  [1m[34mSELECT "card_assignments".* FROM "card_assignments" WHERE "card_assignments"."card_id" = 10 /*application='RailsApp'*/[0m
+  [1m[36mAiSuggestion Load (0.0ms)[0m  [1m[34mSELECT "ai_suggestions".* FROM "ai_suggestions" WHERE "ai_suggestions"."card_id" = 10 /*application='RailsApp'*/[0m
+  [1m[36mCard Destroy (0.0ms)[0m  [1m[31mDELETE FROM "cards" WHERE "cards"."id" = 10 /*application='RailsApp'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='RailsApp'*/[0m
+DEPRECATION WARNING: ActiveSupport::Configurable is deprecated without replacement, and will be removed in Rails 8.2.
+
+You can emulate the previous behavior with `class_attribute`.
+ (called from <main> at /Users/ericlaquer/Documents/GitHub/CollaborativeKanban/rails_app/config/environment.rb:5)

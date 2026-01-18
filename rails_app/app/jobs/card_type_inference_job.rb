@@ -5,35 +5,15 @@ class CardTypeInferenceJob < ApplicationJob
   retry_on Llm::BaseClient::ConnectionError, wait: :polynomially_longer, attempts: 3
 
   def perform(card_id)
-    card = Card.find_by(id: card_id)
-    return unless card
+    task = TypeInferenceTask.new(card_id: card_id)
+    result = task.run_conditional { |r| r.value! }
 
-    # Skip if already inferred with high confidence
-    return if card.type_inference_confidence == "high"
-
-    inferrer = CardIntelligence::TypeInferrer.new
-    result = inferrer.infer(title: card.title, description: card.description)
-
-    card.update!(
-      card_type: result.type,
-      type_inference_confidence: result.confidence.to_s,
-      type_inferred_at: Time.current
-    )
-
-    # Broadcast update via Turbo Streams
-    broadcast_card_update(card)
-  end
-
-  private
-
-  def broadcast_card_update(card)
-    Turbo::StreamsChannel.broadcast_replace_to(
-      "board_#{card.board_id}",
-      target: "card-#{card.id}",
-      partial: "boards/card",
-      locals: { card: card, board: card.board }
-    )
-  rescue StandardError => e
-    Rails.logger.warn("Failed to broadcast card update: #{e.message}")
+    if result.failure?
+      failure = result.failure
+      # Don't re-raise for expected skips (already high confidence)
+      unless failure[:skipped]
+        Rails.logger.error("TypeInferenceTask failed: #{failure[:error]}")
+      end
+    end
   end
 end

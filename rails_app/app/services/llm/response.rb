@@ -52,5 +52,14 @@ module Llm
         content.split(start_marker).last&.strip
       end
     end
+
+    # Convert to dry-monads Result for TaskFrame integration
+    def to_result
+      if success?
+        Dry::Monads::Success(self)
+      else
+        Dry::Monads::Failure(error: error, provider: provider)
+      end
+    end
   end
 end
