@@ -1,0 +1,3 @@
+<%= turbo_stream.append "kanban-columns" do %>
+  <%= render partial: 'boards/column', locals: { column: @column, board: @board } %>
+<% end %>

@@ -1,0 +1,27 @@
+<%
+  icon_class = case level
+  when 'personal' then 'text-blue-500'
+  when 'team' then 'text-green-500'
+  when 'group' then 'text-purple-500'
+  when 'enterprise' then 'text-orange-500'
+  else 'text-gray-500'
+  end
+%>
+<% case level %>
+<% when 'personal' %>
+  <svg class="h-5 w-5 <%= icon_class %>" viewBox="0 0 20 20" fill="currentColor">
+    <path d="M10 8a3 3 0 100-6 3 3 0 000 6zM3.465 14.493a1.23 1.23 0 00.41 1.412A9.957 9.957 0 0010 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.408-1.41a7.002 7.002 0 00-13.074.003z" />
+  </svg>
+<% when 'team' %>
+  <svg class="h-5 w-5 <%= icon_class %>" viewBox="0 0 20 20" fill="currentColor">
+    <path d="M10 9a3 3 0 100-6 3 3 0 000 6zM6 8a2 2 0 11-4 0 2 2 0 014 0zM1.49 15.326a.78.78 0 01-.358-.442 3 3 0 014.308-3.516 6.484 6.484 0 00-1.905 3.959c-.023.222-.014.442.025.654a4.97 4.97 0 01-2.07-.655zM16.44 15.98a4.97 4.97 0 002.07-.654.78.78 0 00.357-.442 3 3 0 00-4.308-3.517 6.484 6.484 0 011.907 3.96 2.32 2.32 0 01-.026.654zM18 8a2 2 0 11-4 0 2 2 0 014 0zM5.304 16.19a.844.844 0 01-.277-.71 5 5 0 019.947 0 .843.843 0 01-.277.71A6.975 6.975 0 0110 18a6.974 6.974 0 01-4.696-1.81z" />
+  </svg>
+<% when 'group' %>
+  <svg class="h-5 w-5 <%= icon_class %>" viewBox="0 0 20 20" fill="currentColor">
+    <path fill-rule="evenodd" d="M9.674 2.075a.75.75 0 01.652 0l7.25 3.5A.75.75 0 0117 6.957V16.5h.25a.75.75 0 010 1.5H2.75a.75.75 0 010-1.5H3V6.957a.75.75 0 01-.576-1.382l7.25-3.5zM11 6a1 1 0 11-2 0 1 1 0 012 0zm0 4a1 1 0 11-2 0 1 1 0 012 0zm0 4a1 1 0 11-2 0 1 1 0 012 0z" clip-rule="evenodd" />
+  </svg>
+<% when 'enterprise' %>
+  <svg class="h-5 w-5 <%= icon_class %>" viewBox="0 0 20 20" fill="currentColor">
+    <path fill-rule="evenodd" d="M1 2.75A.75.75 0 011.75 2h16.5a.75.75 0 010 1.5H18v8.75A2.75 2.75 0 0115.25 15H4.75A2.75 2.75 0 012 12.25V3.5h-.25A.75.75 0 011 2.75zM7.25 8a.75.75 0 01.75-.75h4a.75.75 0 010 1.5H8a.75.75 0 01-.75-.75zm-2.5 8.25a.75.75 0 01.75-.75h9a.75.75 0 010 1.5h-9a.75.75 0 01-.75-.75z" clip-rule="evenodd" />
+  </svg>
+<% end %>

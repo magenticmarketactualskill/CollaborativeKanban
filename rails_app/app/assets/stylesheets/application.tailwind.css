@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+/* Custom Kanban styles to match React app */
+@layer components {
+  /* Kanban column */
+  .kanban-column {
+    @apply flex-shrink-0 w-72 bg-gray-100 rounded-lg p-3 flex flex-col;
+    min-height: 500px;
+  }
+
+  /* Kanban card */
+  .kanban-card {
+    @apply bg-white rounded-lg shadow-sm p-3 cursor-pointer transition-shadow;
+  }
+
+  .kanban-card:hover {
+    @apply shadow-md;
+  }
+
+  /* Priority border colors */
+  .border-blue-500 {
+    border-left-color: #3b82f6;
+  }
+
+  .border-yellow-500 {
+    border-left-color: #eab308;
+  }
+
+  .border-orange-500 {
+    border-left-color: #f97316;
+  }
+
+  .border-red-500 {
+    border-left-color: #ef4444;
+  }
+
+  /* Line clamp utility */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Drag and drop states */
+  .dragging {
+    @apply opacity-50;
+  }
+
+  .drop-target {
+    @apply bg-blue-50 border-2 border-dashed border-blue-300;
+  }
+}
+
+/* Form styling */
+@layer base {
+  input[type="text"],
+  input[type="email"],
+  input[type="date"],
+  textarea,
+  select {
+    @apply block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6;
+  }
+}

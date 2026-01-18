@@ -1,0 +1,45 @@
+<div class="flex-shrink-0 w-72 bg-gray-100 rounded-lg p-3 flex flex-col max-h-full"
+     data-column-id="<%= column.id %>"
+     data-kanban-target="column">
+  <div class="flex items-center justify-between mb-3">
+    <div class="flex items-center gap-2">
+      <h3 class="font-semibold text-gray-900"><%= column.name %></h3>
+      <span class="inline-flex items-center rounded-full bg-gray-200 px-2 py-0.5 text-xs font-medium text-gray-700">
+        <%= column.cards.count %>
+      </span>
+    </div>
+    <% if board.user_can_edit?(current_user) %>
+      <div class="flex items-center gap-1">
+        <button type="button"
+                data-action="click->kanban#showNewCardForm"
+                data-column-id="<%= column.id %>"
+                class="text-gray-400 hover:text-gray-500">
+          <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
+          </svg>
+        </button>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="flex-1 overflow-y-auto space-y-2 min-h-[200px]"
+       data-kanban-target="cardList"
+       data-column-id="<%= column.id %>">
+    <% column.cards.each do |card| %>
+      <%= render partial: 'boards/card', locals: { card: card, board: board } %>
+    <% end %>
+  </div>
+
+  <% if board.user_can_edit?(current_user) %>
+    <!-- New Card Form (hidden by default) -->
+    <div class="hidden mt-3" data-kanban-target="newCardForm" data-column-id="<%= column.id %>">
+      <%= form_with url: board_cards_path(board, column_id: column.id), class: "bg-white rounded-lg shadow p-3" do |f| %>
+        <%= f.text_field :title, placeholder: "Card title", class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 px-3" %>
+        <div class="mt-2 flex gap-2">
+          <%= f.submit "Add", class: "flex-1 rounded-md bg-blue-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 cursor-pointer" %>
+          <button type="button" data-action="click->kanban#hideNewCardForm" data-column-id="<%= column.id %>" class="flex-1 rounded-md bg-gray-100 px-3 py-1.5 text-sm font-semibold text-gray-700 hover:bg-gray-200">Cancel</button>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>

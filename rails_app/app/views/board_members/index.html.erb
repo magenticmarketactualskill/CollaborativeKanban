@@ -1,0 +1,95 @@
+<div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-10">
+  <div class="sm:flex sm:items-center sm:justify-between">
+    <div>
+      <div class="flex items-center gap-2">
+        <%= link_to @board, class: "text-gray-400 hover:text-gray-500" do %>
+          <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M17 10a.75.75 0 01-.75.75H5.612l4.158 3.96a.75.75 0 11-1.04 1.08l-5.5-5.25a.75.75 0 010-1.08l5.5-5.25a.75.75 0 111.04 1.08L5.612 9.25H16.25A.75.75 0 0117 10z" clip-rule="evenodd" />
+          </svg>
+        <% end %>
+        <h1 class="text-2xl font-bold text-gray-900">Board Members</h1>
+      </div>
+      <p class="mt-2 text-sm text-gray-700">Manage who has access to <strong><%= @board.name %></strong>.</p>
+    </div>
+  </div>
+
+  <!-- Owner -->
+  <div class="mt-8">
+    <h2 class="text-lg font-semibold text-gray-900">Owner</h2>
+    <div class="mt-4 bg-white shadow rounded-lg">
+      <div class="px-4 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-blue-600 text-white text-sm font-medium">
+            <%= @board.owner.initials %>
+          </div>
+          <div>
+            <p class="text-sm font-medium text-gray-900"><%= @board.owner.name %></p>
+            <p class="text-sm text-gray-500"><%= @board.owner.email %></p>
+          </div>
+        </div>
+        <span class="inline-flex items-center rounded-full bg-purple-100 px-2.5 py-0.5 text-xs font-medium text-purple-700">
+          Owner
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Members -->
+  <div class="mt-8">
+    <h2 class="text-lg font-semibold text-gray-900">Members</h2>
+    <% if @members.any? %>
+      <div class="mt-4 bg-white shadow rounded-lg divide-y divide-gray-200">
+        <% @members.each do |member| %>
+          <div class="px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-blue-600 text-white text-sm font-medium">
+                <%= member.user.initials %>
+              </div>
+              <div>
+                <p class="text-sm font-medium text-gray-900"><%= member.user.name %></p>
+                <p class="text-sm text-gray-500"><%= member.user.email %></p>
+              </div>
+            </div>
+            <div class="flex items-center gap-4">
+              <%= form_with model: [@board, member], class: "flex items-center gap-2" do |f| %>
+                <%= f.select :role, BoardMember::ROLES.map { |r| [r.titleize, r] }, {}, class: "rounded-md border-gray-300 text-sm focus:border-blue-500 focus:ring-blue-500", onchange: "this.form.requestSubmit()" %>
+              <% end %>
+              <%= button_to board_board_member_path(@board, member), method: :delete, data: { turbo_confirm: "Remove #{member.user.name} from this board?" }, class: "text-gray-400 hover:text-red-500" do %>
+                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M8.75 1A2.75 2.75 0 006 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 10.23 1.482l.149-.022.841 10.518A2.75 2.75 0 007.596 19h4.807a2.75 2.75 0 002.742-2.53l.841-10.52.149.023a.75.75 0 00.23-1.482A41.03 41.03 0 0014 4.193V3.75A2.75 2.75 0 0011.25 1h-2.5zM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4zM8.58 7.72a.75.75 0 00-1.5.06l.3 7.5a.75.75 0 101.5-.06l-.3-7.5zm4.34.06a.75.75 0 10-1.5-.06l-.3 7.5a.75.75 0 101.5.06l.3-7.5z" clip-rule="evenodd" />
+                </svg>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="mt-4 text-center py-8 bg-white shadow rounded-lg">
+        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+        </svg>
+        <p class="mt-2 text-sm text-gray-500">No members yet. Add someone below.</p>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Add Member -->
+  <% if @available_users.any? %>
+    <div class="mt-8">
+      <h2 class="text-lg font-semibold text-gray-900">Add Member</h2>
+      <div class="mt-4 bg-white shadow rounded-lg p-4">
+        <%= form_with model: [@board, BoardMember.new], class: "flex items-end gap-4" do |f| %>
+          <div class="flex-1">
+            <%= f.label :user_id, "User", class: "block text-sm font-medium text-gray-700" %>
+            <%= f.select :user_id, @available_users.map { |u| ["#{u.name} (#{u.email})", u.id] }, { prompt: "Select a user" }, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" %>
+          </div>
+          <div class="w-32">
+            <%= f.label :role, class: "block text-sm font-medium text-gray-700" %>
+            <%= f.select :role, BoardMember::ROLES.map { |r| [r.titleize, r] }, {}, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" %>
+          </div>
+          <%= f.submit "Add", class: "rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 cursor-pointer" %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>

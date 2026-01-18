@@ -1,0 +1,95 @@
+<div class="h-[calc(100vh-4rem)]" data-controller="kanban">
+  <!-- Board Header -->
+  <div class="bg-white border-b border-gray-200 px-4 sm:px-6 lg:px-8 py-4">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <%= link_to boards_path, class: "text-gray-400 hover:text-gray-500" do %>
+          <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M17 10a.75.75 0 01-.75.75H5.612l4.158 3.96a.75.75 0 11-1.04 1.08l-5.5-5.25a.75.75 0 010-1.08l5.5-5.25a.75.75 0 111.04 1.08L5.612 9.25H16.25A.75.75 0 0117 10z" clip-rule="evenodd" />
+          </svg>
+        <% end %>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-xl font-bold text-gray-900"><%= @board.name %></h1>
+            <%= render partial: 'shared/level_badge', locals: { level: @board.level } %>
+          </div>
+          <% if @board.description.present? %>
+            <p class="mt-1 text-sm text-gray-500"><%= @board.description %></p>
+          <% end %>
+        </div>
+      </div>
+      <div class="flex items-center gap-4">
+        <!-- Members -->
+        <div class="flex -space-x-2">
+          <% @members.first(5).each do |member| %>
+            <div class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-600 text-white text-xs font-medium ring-2 ring-white" title="<%= member.name %>">
+              <%= member.initials %>
+            </div>
+          <% end %>
+          <% if @members.count > 5 %>
+            <div class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 text-gray-600 text-xs font-medium ring-2 ring-white">
+              +<%= @members.count - 5 %>
+            </div>
+          <% end %>
+        </div>
+
+        <% if @board.user_can_admin?(current_user) %>
+          <%= link_to board_board_members_path(@board), class: "text-gray-400 hover:text-gray-500" do %>
+            <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M10 9a3 3 0 100-6 3 3 0 000 6zM6 8a2 2 0 11-4 0 2 2 0 014 0zM1.49 15.326a.78.78 0 01-.358-.442 3 3 0 014.308-3.516 6.484 6.484 0 00-1.905 3.959c-.023.222-.014.442.025.654a4.97 4.97 0 01-2.07-.655zM16.44 15.98a4.97 4.97 0 002.07-.654.78.78 0 00.357-.442 3 3 0 00-4.308-3.517 6.484 6.484 0 011.907 3.96 2.32 2.32 0 01-.026.654zM18 8a2 2 0 11-4 0 2 2 0 014 0zM5.304 16.19a.844.844 0 01-.277-.71 5 5 0 019.947 0 .843.843 0 01-.277.71A6.975 6.975 0 0110 18a6.974 6.974 0 01-4.696-1.81z" />
+            </svg>
+          <% end %>
+          <%= link_to edit_board_path(@board), class: "text-gray-400 hover:text-gray-500" do %>
+            <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M7.84 1.804A1 1 0 018.82 1h2.36a1 1 0 01.98.804l.331 1.652a6.993 6.993 0 011.929 1.115l1.598-.54a1 1 0 011.186.447l1.18 2.044a1 1 0 01-.205 1.251l-1.267 1.113a7.047 7.047 0 010 2.228l1.267 1.113a1 1 0 01.206 1.25l-1.18 2.045a1 1 0 01-1.187.447l-1.598-.54a6.993 6.993 0 01-1.929 1.115l-.33 1.652a1 1 0 01-.98.804H8.82a1 1 0 01-.98-.804l-.331-1.652a6.993 6.993 0 01-1.929-1.115l-1.598.54a1 1 0 01-1.186-.447l-1.18-2.044a1 1 0 01.205-1.251l1.267-1.114a7.05 7.05 0 010-2.227L1.821 7.773a1 1 0 01-.206-1.25l1.18-2.045a1 1 0 011.187-.447l1.598.54A6.993 6.993 0 017.51 3.456l.33-1.652zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
+            </svg>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Kanban Board -->
+  <div class="p-4 sm:p-6 lg:p-8 h-full overflow-x-auto">
+    <div class="flex gap-4 h-full" data-kanban-target="board">
+      <% @columns.each do |column| %>
+        <%= render partial: 'boards/column', locals: { column: column, board: @board } %>
+      <% end %>
+
+      <% if @board.user_can_edit?(current_user) %>
+        <!-- Add Column Button -->
+        <div class="flex-shrink-0 w-72">
+          <button type="button"
+                  data-action="click->kanban#showNewColumnForm"
+                  class="w-full rounded-lg border-2 border-dashed border-gray-300 p-4 text-center hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+            <svg class="mx-auto h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            <span class="mt-2 block text-sm font-semibold text-gray-900">Add Column</span>
+          </button>
+
+          <!-- New Column Form (hidden by default) -->
+          <div class="hidden mt-4" data-kanban-target="newColumnForm">
+            <%= form_with url: board_columns_path(@board), class: "bg-white rounded-lg shadow p-4" do |f| %>
+              <%= f.text_field :name, placeholder: "Column name", class: "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 px-3" %>
+              <div class="mt-3 flex gap-2">
+                <%= f.submit "Add", class: "flex-1 rounded-md bg-blue-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 cursor-pointer" %>
+                <button type="button" data-action="click->kanban#hideNewColumnForm" class="flex-1 rounded-md bg-gray-100 px-3 py-1.5 text-sm font-semibold text-gray-700 hover:bg-gray-200">Cancel</button>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<!-- Card Detail Drawer -->
+<div id="card-drawer" class="hidden fixed inset-0 z-50" data-controller="drawer">
+  <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" data-action="click->drawer#close"></div>
+  <div class="fixed inset-y-0 right-0 w-full max-w-md bg-white shadow-xl" data-drawer-target="panel">
+    <div id="card-drawer-content">
+      <!-- Card content loaded via Turbo -->
+    </div>
+  </div>
+</div>

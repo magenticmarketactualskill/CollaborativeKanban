@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html class="h-full bg-gray-100">
+  <head>
+    <title><%= content_for(:title) || "MagenticFactory" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="MagenticFactory">
+    <meta name="mobile-web-app-capable" content="yes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
+  </head>
+
+  <body class="h-full">
+    <div class="min-h-full">
+      <% if user_signed_in? %>
+        <nav class="bg-white shadow-sm border-b border-gray-200">
+          <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="flex h-16 justify-between">
+              <div class="flex">
+                <div class="flex flex-shrink-0 items-center">
+                  <%= link_to boards_path, class: "flex items-center gap-2" do %>
+                    <svg class="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
+                    </svg>
+                    <span class="text-xl font-bold text-gray-900">MagenticFactory</span>
+                  <% end %>
+                </div>
+              </div>
+              <div class="flex items-center gap-4">
+                <span class="text-sm text-gray-700"><%= current_user.name %></span>
+                <div class="flex items-center justify-center w-8 h-8 rounded-full bg-blue-600 text-white text-sm font-medium">
+                  <%= current_user.initials %>
+                </div>
+                <%= button_to logout_path, method: :delete, class: "text-sm text-gray-500 hover:text-gray-700" do %>
+                  Sign out
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </nav>
+      <% end %>
+
+      <main>
+        <% if flash[:notice] %>
+          <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-4">
+            <div class="rounded-md bg-green-50 p-4">
+              <p class="text-sm font-medium text-green-800"><%= flash[:notice] %></p>
+            </div>
+          </div>
+        <% end %>
+        <% if flash[:alert] %>
+          <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-4">
+            <div class="rounded-md bg-red-50 p-4">
+              <p class="text-sm font-medium text-red-800"><%= flash[:alert] %></p>
+            </div>
+          </div>
+        <% end %>
+        <%= yield %>
+      </main>
+    </div>
+  </body>
+</html>

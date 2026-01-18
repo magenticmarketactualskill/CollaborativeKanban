@@ -1,0 +1,12 @@
+class CreateCardAssignments < ActiveRecord::Migration[8.0]
+  def change
+    create_table :card_assignments do |t|
+      t.references :card, null: false, foreign_key: true
+      t.references :user, null: false, foreign_key: true
+
+      t.timestamps
+    end
+
+    add_index :card_assignments, [:card_id, :user_id], unique: true
+  end
+end

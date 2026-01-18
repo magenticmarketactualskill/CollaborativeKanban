@@ -1,0 +1,5 @@
+<%= turbo_stream.prepend "column-#{@column.id}-cards" do %>
+  <%= render partial: 'boards/card', locals: { card: @card, board: @board } %>
+<% end %>
+
+<%= turbo_stream.update "column-#{@column.id}-count", @column.cards.count.to_s %>

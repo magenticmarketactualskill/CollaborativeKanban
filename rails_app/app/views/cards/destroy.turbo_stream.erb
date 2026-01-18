@@ -1,0 +1,2 @@
+<%= turbo_stream.remove "card-#{@card.id}" %>
+<%= turbo_stream.update "column-#{@column.id}-count", @column.cards.count.to_s %>
