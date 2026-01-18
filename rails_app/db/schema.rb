@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_18_200000) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_18_220004) do
   create_table "ai_suggestions", force: :cascade do |t|
     t.datetime "acted_at"
     t.integer "card_id", null: false
@@ -74,6 +74,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_18_200000) do
     t.index ["user_id"], name: "index_card_assignments_on_user_id"
   end
 
+  create_table "card_facts", force: :cascade do |t|
+    t.integer "card_id", null: false
+    t.datetime "created_at", null: false
+    t.integer "fact_id", null: false
+    t.string "role", default: "source", null: false
+    t.string "source_field"
+    t.integer "text_offset_end"
+    t.integer "text_offset_start"
+    t.datetime "updated_at", null: false
+    t.index ["card_id", "fact_id", "role"], name: "index_card_facts_on_card_id_and_fact_id_and_role", unique: true
+    t.index ["card_id"], name: "index_card_facts_on_card_id"
+    t.index ["fact_id"], name: "index_card_facts_on_fact_id"
+    t.index ["role"], name: "index_card_facts_on_role"
+  end
+
   create_table "card_relationships", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "created_by_id"
@@ -123,6 +138,83 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_18_200000) do
     t.index ["board_id"], name: "index_columns_on_board_id"
   end
 
+  create_table "domains", force: :cascade do |t|
+    t.integer "board_id", null: false
+    t.string "color"
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.string "icon"
+    t.string "name", null: false
+    t.integer "parent_domain_id"
+    t.boolean "system_generated", default: false
+    t.datetime "updated_at", null: false
+    t.index ["board_id", "name"], name: "index_domains_on_board_id_and_name", unique: true
+    t.index ["board_id"], name: "index_domains_on_board_id"
+    t.index ["parent_domain_id"], name: "index_domains_on_parent_domain_id"
+  end
+
+  create_table "entities", force: :cascade do |t|
+    t.json "aliases", default: []
+    t.float "confidence", default: 1.0
+    t.datetime "created_at", null: false
+    t.integer "created_by_id"
+    t.text "description"
+    t.integer "domain_id", null: false
+    t.string "entity_type", null: false
+    t.string "external_id"
+    t.string "external_source"
+    t.string "name", null: false
+    t.json "properties", default: {}
+    t.datetime "updated_at", null: false
+    t.index ["created_by_id"], name: "index_entities_on_created_by_id"
+    t.index ["domain_id", "name"], name: "index_entities_on_domain_id_and_name", unique: true
+    t.index ["domain_id"], name: "index_entities_on_domain_id"
+    t.index ["entity_type"], name: "index_entities_on_entity_type"
+    t.index ["external_source", "external_id"], name: "index_entities_on_external_source_and_external_id", unique: true, where: "external_id IS NOT NULL"
+  end
+
+  create_table "entity_mentions", force: :cascade do |t|
+    t.integer "card_id", null: false
+    t.float "confidence", default: 1.0
+    t.datetime "created_at", null: false
+    t.integer "entity_id", null: false
+    t.string "extraction_method"
+    t.string "mention_text", null: false
+    t.string "source_field", null: false
+    t.integer "text_offset_end"
+    t.integer "text_offset_start"
+    t.datetime "updated_at", null: false
+    t.index ["card_id", "entity_id"], name: "index_entity_mentions_on_card_id_and_entity_id"
+    t.index ["card_id"], name: "index_entity_mentions_on_card_id"
+    t.index ["entity_id"], name: "index_entity_mentions_on_entity_id"
+    t.index ["mention_text"], name: "index_entity_mentions_on_mention_text"
+  end
+
+  create_table "facts", force: :cascade do |t|
+    t.float "confidence", default: 1.0
+    t.datetime "created_at", null: false
+    t.integer "created_by_id"
+    t.integer "domain_id", null: false
+    t.string "extraction_method"
+    t.boolean "negated", default: false
+    t.integer "object_entity_id"
+    t.string "object_type"
+    t.string "object_value"
+    t.string "predicate", null: false
+    t.integer "subject_entity_id", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "valid_from"
+    t.datetime "valid_until"
+    t.index ["created_by_id"], name: "index_facts_on_created_by_id"
+    t.index ["domain_id"], name: "index_facts_on_domain_id"
+    t.index ["extraction_method"], name: "index_facts_on_extraction_method"
+    t.index ["object_entity_id"], name: "index_facts_on_object_entity_id"
+    t.index ["predicate"], name: "index_facts_on_predicate"
+    t.index ["subject_entity_id", "predicate", "object_entity_id"], name: "idx_facts_unique_entity_relationship", unique: true, where: "object_entity_id IS NOT NULL AND valid_until IS NULL"
+    t.index ["subject_entity_id", "predicate", "object_value"], name: "idx_facts_unique_value_relationship", unique: true, where: "object_value IS NOT NULL AND valid_until IS NULL"
+    t.index ["subject_entity_id"], name: "index_facts_on_subject_entity_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email", null: false
@@ -145,6 +237,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_18_200000) do
   add_foreign_key "boards", "users", column: "owner_id"
   add_foreign_key "card_assignments", "cards"
   add_foreign_key "card_assignments", "users"
+  add_foreign_key "card_facts", "cards"
+  add_foreign_key "card_facts", "facts"
   add_foreign_key "card_relationships", "cards", column: "source_card_id"
   add_foreign_key "card_relationships", "cards", column: "target_card_id"
   add_foreign_key "card_relationships", "users", column: "created_by_id"
@@ -152,4 +246,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_18_200000) do
   add_foreign_key "cards", "columns"
   add_foreign_key "cards", "users", column: "created_by_id"
   add_foreign_key "columns", "boards"
+  add_foreign_key "domains", "boards"
+  add_foreign_key "domains", "domains", column: "parent_domain_id"
+  add_foreign_key "entities", "domains"
+  add_foreign_key "entities", "users", column: "created_by_id"
+  add_foreign_key "entity_mentions", "cards"
+  add_foreign_key "entity_mentions", "entities"
+  add_foreign_key "facts", "domains"
+  add_foreign_key "facts", "entities", column: "object_entity_id"
+  add_foreign_key "facts", "entities", column: "subject_entity_id"
+  add_foreign_key "facts", "users", column: "created_by_id"
 end

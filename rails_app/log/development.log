@@ -1861,3 +1861,155 @@ DEPRECATION WARNING: ActiveSupport::Configurable is deprecated without replaceme
 
 You can emulate the previous behavior with `class_attribute`.
  (called from <main> at /Users/ericlaquer/Documents/GitHub/CollaborativeKanban/rails_app/config/environment.rb:5)
+DEPRECATION WARNING: ActiveSupport::Configurable is deprecated without replacement, and will be removed in Rails 8.2.
+
+You can emulate the previous behavior with `class_attribute`.
+ (called from <main> at /Users/ericlaquer/Documents/GitHub/CollaborativeKanban/rails_app/config/environment.rb:5)
+  [1m[36mActiveRecord::InternalMetadata Load (0.7ms)[0m  [1m[34mSELECT * FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = 'environment' ORDER BY "ar_internal_metadata"."key" ASC LIMIT 1 /*application='RailsApp'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.0ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='RailsApp'*/[0m
+Migrating to CreateDomains (20260118220000)
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='RailsApp'*/[0m
+  [1m[35m (0.5ms)[0m  [1m[35mCREATE TABLE "domains" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar NOT NULL, "description" text, "board_id" integer NOT NULL, "parent_domain_id" integer, "color" varchar, "icon" varchar, "system_generated" boolean DEFAULT FALSE, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_dec7226872"
+FOREIGN KEY ("board_id")
+  REFERENCES "boards" ("id")
+, CONSTRAINT "fk_rails_cef06b2890"
+FOREIGN KEY ("parent_domain_id")
+  REFERENCES "domains" ("id")
+) /*application='RailsApp'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_domains_on_board_id" ON "domains" ("board_id") /*application='RailsApp'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_domains_on_parent_domain_id" ON "domains" ("parent_domain_id") /*application='RailsApp'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_domains_on_board_id_and_name" ON "domains" ("board_id", "name") /*application='RailsApp'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE INDEX "index_domains_on_parent_domain_id" ON "domains" ("parent_domain_id") /*application='RailsApp'*/[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION /*application='RailsApp'*/[0m
+DEPRECATION WARNING: ActiveSupport::Configurable is deprecated without replacement, and will be removed in Rails 8.2.
+
+You can emulate the previous behavior with `class_attribute`.
+ (called from <main> at /Users/ericlaquer/Documents/GitHub/CollaborativeKanban/rails_app/config/environment.rb:5)
+  [1m[36mActiveRecord::SchemaMigration Load (0.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='RailsApp'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.0ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='RailsApp'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.0ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='RailsApp'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.0ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='RailsApp'*/[0m
+Reverting CreateCardRelationships (20260118200000)
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='RailsApp'*/[0m
+  [1m[35mSQL (0.2ms)[0m  [1m[35mDROP INDEX "index_card_relationships_on_relationship_type" /*application='RailsApp'*/[0m
+  [1m[35mSQL (0.0ms)[0m  [1m[35mDROP INDEX "idx_card_relationships_unique" /*application='RailsApp'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mDROP TABLE "card_relationships" /*application='RailsApp'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Destroy (0.0ms)[0m  [1m[31mDELETE FROM "schema_migrations" WHERE "schema_migrations"."version" = '20260118200000' /*application='RailsApp'*/[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='RailsApp'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.0ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='RailsApp'*/[0m
+DEPRECATION WARNING: ActiveSupport::Configurable is deprecated without replacement, and will be removed in Rails 8.2.
+
+You can emulate the previous behavior with `class_attribute`.
+ (called from <main> at /Users/ericlaquer/Documents/GitHub/CollaborativeKanban/rails_app/config/environment.rb:5)
+  [1m[36mActiveRecord::SchemaMigration Load (0.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='RailsApp'*/[0m
+DEPRECATION WARNING: ActiveSupport::Configurable is deprecated without replacement, and will be removed in Rails 8.2.
+
+You can emulate the previous behavior with `class_attribute`.
+ (called from <main> at /Users/ericlaquer/Documents/GitHub/CollaborativeKanban/rails_app/config/environment.rb:5)
+  [1m[36mActiveRecord::InternalMetadata Load (0.1ms)[0m  [1m[34mSELECT * FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = 'environment' ORDER BY "ar_internal_metadata"."key" ASC LIMIT 1 /*application='RailsApp'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.0ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='RailsApp'*/[0m
+Migrating to CreateCardRelationships (20260118200000)
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='RailsApp'*/[0m
+  [1m[35m (0.4ms)[0m  [1m[35mCREATE TABLE "card_relationships" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "source_card_id" integer NOT NULL, "target_card_id" integer NOT NULL, "relationship_type" varchar NOT NULL, "created_by_id" integer, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_524f57c10c"
+FOREIGN KEY ("source_card_id")
+  REFERENCES "cards" ("id")
+, CONSTRAINT "fk_rails_970ce7f56f"
+FOREIGN KEY ("target_card_id")
+  REFERENCES "cards" ("id")
+, CONSTRAINT "fk_rails_abda762717"
+FOREIGN KEY ("created_by_id")
+  REFERENCES "users" ("id")
+) /*application='RailsApp'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_card_relationships_on_source_card_id" ON "card_relationships" ("source_card_id") /*application='RailsApp'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_card_relationships_on_target_card_id" ON "card_relationships" ("target_card_id") /*application='RailsApp'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_card_relationships_on_created_by_id" ON "card_relationships" ("created_by_id") /*application='RailsApp'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE UNIQUE INDEX "idx_card_relationships_unique" ON "card_relationships" ("source_card_id", "target_card_id", "relationship_type") /*application='RailsApp'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_card_relationships_on_relationship_type" ON "card_relationships" ("relationship_type") /*application='RailsApp'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.0ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20260118200000') RETURNING "version" /*application='RailsApp'*/[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='RailsApp'*/[0m
+Migrating to CreateDomains (20260118220000)
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='RailsApp'*/[0m
+  [1m[35m (0.3ms)[0m  [1m[35mCREATE TABLE "domains" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar NOT NULL, "description" text, "board_id" integer NOT NULL, "parent_domain_id" integer, "color" varchar, "icon" varchar, "system_generated" boolean DEFAULT FALSE, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_dec7226872"
+FOREIGN KEY ("board_id")
+  REFERENCES "boards" ("id")
+, CONSTRAINT "fk_rails_cef06b2890"
+FOREIGN KEY ("parent_domain_id")
+  REFERENCES "domains" ("id")
+) /*application='RailsApp'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_domains_on_board_id" ON "domains" ("board_id") /*application='RailsApp'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_domains_on_parent_domain_id" ON "domains" ("parent_domain_id") /*application='RailsApp'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_domains_on_board_id_and_name" ON "domains" ("board_id", "name") /*application='RailsApp'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.0ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20260118220000') RETURNING "version" /*application='RailsApp'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='RailsApp'*/[0m
+Migrating to CreateEntities (20260118220001)
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='RailsApp'*/[0m
+  [1m[35m (0.3ms)[0m  [1m[35mCREATE TABLE "entities" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar NOT NULL, "aliases" json DEFAULT '[]', "entity_type" varchar NOT NULL, "description" text, "domain_id" integer NOT NULL, "properties" json DEFAULT '{}', "external_id" varchar, "external_source" varchar, "confidence" float DEFAULT 1.0, "created_by_id" integer, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_8f64e92007"
+FOREIGN KEY ("domain_id")
+  REFERENCES "domains" ("id")
+, CONSTRAINT "fk_rails_828926881c"
+FOREIGN KEY ("created_by_id")
+  REFERENCES "users" ("id")
+) /*application='RailsApp'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_entities_on_domain_id" ON "entities" ("domain_id") /*application='RailsApp'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_entities_on_created_by_id" ON "entities" ("created_by_id") /*application='RailsApp'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_entities_on_domain_id_and_name" ON "entities" ("domain_id", "name") /*application='RailsApp'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_entities_on_entity_type" ON "entities" ("entity_type") /*application='RailsApp'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_entities_on_external_source_and_external_id" ON "entities" ("external_source", "external_id") WHERE external_id IS NOT NULL /*application='RailsApp'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.0ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20260118220001') RETURNING "version" /*application='RailsApp'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='RailsApp'*/[0m
+Migrating to CreateFacts (20260118220002)
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='RailsApp'*/[0m
+  [1m[35m (0.3ms)[0m  [1m[35mCREATE TABLE "facts" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "subject_entity_id" integer NOT NULL, "predicate" varchar NOT NULL, "object_entity_id" integer, "object_value" varchar, "object_type" varchar, "domain_id" integer NOT NULL, "confidence" float DEFAULT 1.0, "extraction_method" varchar, "valid_from" datetime(6), "valid_until" datetime(6), "negated" boolean DEFAULT FALSE, "created_by_id" integer, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_be3ac39544"
+FOREIGN KEY ("subject_entity_id")
+  REFERENCES "entities" ("id")
+, CONSTRAINT "fk_rails_e1e50e9108"
+FOREIGN KEY ("object_entity_id")
+  REFERENCES "entities" ("id")
+, CONSTRAINT "fk_rails_fc49c85648"
+FOREIGN KEY ("domain_id")
+  REFERENCES "domains" ("id")
+, CONSTRAINT "fk_rails_8bdc6e6bb1"
+FOREIGN KEY ("created_by_id")
+  REFERENCES "users" ("id")
+) /*application='RailsApp'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_facts_on_subject_entity_id" ON "facts" ("subject_entity_id") /*application='RailsApp'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_facts_on_object_entity_id" ON "facts" ("object_entity_id") /*application='RailsApp'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_facts_on_domain_id" ON "facts" ("domain_id") /*application='RailsApp'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_facts_on_created_by_id" ON "facts" ("created_by_id") /*application='RailsApp'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_facts_on_predicate" ON "facts" ("predicate") /*application='RailsApp'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE UNIQUE INDEX "idx_facts_unique_entity_relationship" ON "facts" ("subject_entity_id", "predicate", "object_entity_id") WHERE object_entity_id IS NOT NULL AND valid_until IS NULL /*application='RailsApp'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE UNIQUE INDEX "idx_facts_unique_value_relationship" ON "facts" ("subject_entity_id", "predicate", "object_value") WHERE object_value IS NOT NULL AND valid_until IS NULL /*application='RailsApp'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_facts_on_extraction_method" ON "facts" ("extraction_method") /*application='RailsApp'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.0ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20260118220002') RETURNING "version" /*application='RailsApp'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='RailsApp'*/[0m
+Migrating to CreateCardFacts (20260118220003)
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='RailsApp'*/[0m
+  [1m[35m (0.4ms)[0m  [1m[35mCREATE TABLE "card_facts" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "card_id" integer NOT NULL, "fact_id" integer NOT NULL, "role" varchar DEFAULT 'source' NOT NULL, "text_offset_start" integer, "text_offset_end" integer, "source_field" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_92b93fba5d"
+FOREIGN KEY ("card_id")
+  REFERENCES "cards" ("id")
+, CONSTRAINT "fk_rails_3d53832d46"
+FOREIGN KEY ("fact_id")
+  REFERENCES "facts" ("id")
+) /*application='RailsApp'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_card_facts_on_card_id" ON "card_facts" ("card_id") /*application='RailsApp'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_card_facts_on_fact_id" ON "card_facts" ("fact_id") /*application='RailsApp'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE UNIQUE INDEX "index_card_facts_on_card_id_and_fact_id_and_role" ON "card_facts" ("card_id", "fact_id", "role") /*application='RailsApp'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_card_facts_on_role" ON "card_facts" ("role") /*application='RailsApp'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.0ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20260118220003') RETURNING "version" /*application='RailsApp'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='RailsApp'*/[0m
+Migrating to CreateEntityMentions (20260118220004)
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='RailsApp'*/[0m
+  [1m[35m (0.3ms)[0m  [1m[35mCREATE TABLE "entity_mentions" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "entity_id" integer NOT NULL, "card_id" integer NOT NULL, "mention_text" varchar NOT NULL, "source_field" varchar NOT NULL, "text_offset_start" integer, "text_offset_end" integer, "confidence" float DEFAULT 1.0, "extraction_method" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_72e3d18df8"
+FOREIGN KEY ("entity_id")
+  REFERENCES "entities" ("id")
+, CONSTRAINT "fk_rails_71cb37477f"
+FOREIGN KEY ("card_id")
+  REFERENCES "cards" ("id")
+) /*application='RailsApp'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_entity_mentions_on_entity_id" ON "entity_mentions" ("entity_id") /*application='RailsApp'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_entity_mentions_on_card_id" ON "entity_mentions" ("card_id") /*application='RailsApp'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_entity_mentions_on_card_id_and_entity_id" ON "entity_mentions" ("card_id", "entity_id") /*application='RailsApp'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_entity_mentions_on_mention_text" ON "entity_mentions" ("mention_text") /*application='RailsApp'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.0ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20260118220004') RETURNING "version" /*application='RailsApp'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='RailsApp'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.0ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='RailsApp'*/[0m

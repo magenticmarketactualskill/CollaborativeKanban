@@ -19,6 +19,12 @@ class Card < ApplicationRecord
            foreign_key: :target_card_id,
            dependent: :destroy
 
+  # Knowledge graph associations
+  has_many :card_facts, dependent: :destroy
+  has_many :facts, through: :card_facts
+  has_many :entity_mentions, dependent: :destroy
+  has_many :mentioned_entities, through: :entity_mentions, source: :entity
+
   validates :title, presence: true
   validates :priority, inclusion: { in: PRIORITIES }
   validates :position, numericality: { greater_than_or_equal_to: 0 }
@@ -182,6 +188,16 @@ class Card < ApplicationRecord
     suggestions.each(&:save!)
 
     suggestions
+  end
+
+  # Knowledge graph extraction
+  def extract_knowledge!
+    extractor = CardIntelligence::KnowledgeExtractor.new
+    extractor.extract(self)
+  end
+
+  def extract_knowledge_async
+    KnowledgeExtractionJob.perform_later(id)
   end
 
   private
