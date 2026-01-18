@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_18_230004) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_18_230005) do
   create_table "ai_suggestions", force: :cascade do |t|
     t.datetime "acted_at"
     t.integer "card_id", null: false
@@ -243,6 +243,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_18_230004) do
   create_table "llm_configurations", force: :cascade do |t|
     t.boolean "active", default: true, null: false
     t.string "api_key"
+    t.decimal "cost_per_input_token", precision: 12, scale: 10
+    t.decimal "cost_per_output_token", precision: 12, scale: 10
     t.datetime "created_at", null: false
     t.boolean "default_for_type", default: false, null: false
     t.string "endpoint"
@@ -251,11 +253,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_18_230004) do
     t.json "options", default: {}
     t.integer "priority", default: 0, null: false
     t.string "provider_type", null: false
+    t.string "speed_rating"
     t.datetime "updated_at", null: false
     t.integer "user_id"
     t.index ["active"], name: "index_llm_configurations_on_active"
     t.index ["provider_type", "default_for_type"], name: "index_llm_configurations_on_provider_type_and_default_for_type", unique: true, where: "default_for_type = true"
     t.index ["provider_type"], name: "index_llm_configurations_on_provider_type"
+    t.index ["speed_rating"], name: "index_llm_configurations_on_speed_rating"
     t.index ["user_id", "name"], name: "index_llm_configurations_on_user_id_and_name", unique: true
     t.index ["user_id"], name: "index_llm_configurations_on_user_id"
   end

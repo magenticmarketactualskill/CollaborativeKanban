@@ -90,6 +90,39 @@
         <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0"><%= @llm_configuration.priority || 0 %></dd>
       </div>
 
+      <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+        <dt class="text-sm font-medium text-gray-900">Cost per Token</dt>
+        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+          <% if @llm_configuration.cost_per_input_token.present? || @llm_configuration.cost_per_output_token.present? %>
+            <div class="space-y-1">
+              <% if @llm_configuration.cost_per_input_token.present? %>
+                <div>Input: $<%= number_with_precision(@llm_configuration.cost_per_input_token, precision: 10, strip_insignificant_zeros: true) %></div>
+              <% end %>
+              <% if @llm_configuration.cost_per_output_token.present? %>
+                <div>Output: $<%= number_with_precision(@llm_configuration.cost_per_output_token, precision: 10, strip_insignificant_zeros: true) %></div>
+              <% end %>
+            </div>
+          <% else %>
+            <span class="text-gray-400">Not set</span>
+          <% end %>
+        </dd>
+      </div>
+
+      <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+        <dt class="text-sm font-medium text-gray-900">Speed Rating</dt>
+        <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+          <% if @llm_configuration.speed_rating.present? %>
+            <% speed_colors = { "fast" => "green", "medium" => "yellow", "slow" => "red" } %>
+            <% color = speed_colors[@llm_configuration.speed_rating] || "gray" %>
+            <span class="inline-flex items-center rounded-full bg-<%= color %>-100 px-2.5 py-0.5 text-xs font-medium text-<%= color %>-800">
+              <%= @llm_configuration.speed_rating.titleize %>
+            </span>
+          <% else %>
+            <span class="text-gray-400">Not set</span>
+          <% end %>
+        </dd>
+      </div>
+
       <% if @llm_configuration.options.present? %>
         <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
           <dt class="text-sm font-medium text-gray-900">Options</dt>

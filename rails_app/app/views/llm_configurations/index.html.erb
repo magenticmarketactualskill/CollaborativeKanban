@@ -41,6 +41,8 @@
                   <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Name</th>
                   <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Provider</th>
                   <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Model</th>
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Cost</th>
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Speed</th>
                   <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Status</th>
                   <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Default</th>
                   <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
@@ -63,6 +65,31 @@
                       </span>
                     </td>
                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500"><%= config.model %></td>
+                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                      <% if config.cost_per_input_token.present? || config.cost_per_output_token.present? %>
+                        <div class="text-xs">
+                          <% if config.cost_per_input_token.present? %>
+                            <div>In: $<%= number_with_precision(config.cost_per_input_token, precision: 8, strip_insignificant_zeros: true) %></div>
+                          <% end %>
+                          <% if config.cost_per_output_token.present? %>
+                            <div>Out: $<%= number_with_precision(config.cost_per_output_token, precision: 8, strip_insignificant_zeros: true) %></div>
+                          <% end %>
+                        </div>
+                      <% else %>
+                        <span class="text-gray-400">-</span>
+                      <% end %>
+                    </td>
+                    <td class="whitespace-nowrap px-3 py-4 text-sm">
+                      <% if config.speed_rating.present? %>
+                        <% speed_colors = { "fast" => "green", "medium" => "yellow", "slow" => "red" } %>
+                        <% color = speed_colors[config.speed_rating] || "gray" %>
+                        <span class="inline-flex items-center rounded-full bg-<%= color %>-100 px-2.5 py-0.5 text-xs font-medium text-<%= color %>-800">
+                          <%= config.speed_rating.titleize %>
+                        </span>
+                      <% else %>
+                        <span class="text-gray-400">-</span>
+                      <% end %>
+                    </td>
                     <td class="whitespace-nowrap px-3 py-4 text-sm">
                       <% if config.active? %>
                         <span class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">Active</span>

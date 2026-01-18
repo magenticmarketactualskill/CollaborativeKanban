@@ -69,6 +69,9 @@ class LlmConfigurationsController < ApplicationController
       :active,
       :default_for_type,
       :priority,
+      :cost_per_input_token,
+      :cost_per_output_token,
+      :speed_rating,
       options: {}
     )
   end
