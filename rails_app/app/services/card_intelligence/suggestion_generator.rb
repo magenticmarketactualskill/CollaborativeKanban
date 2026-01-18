@@ -17,14 +17,17 @@ module CardIntelligence
       2. Ways to make the title/description clearer or more actionable
       3. Suggestions for breaking down complex tasks into subtasks
 
-      Format as JSON array:
+      You MUST respond with a valid JSON array matching this schema:
       [
-        {"type": "add_field", "field": "field_name", "suggestion": "why and what to add"},
-        {"type": "improve_title", "suggestion": "suggested improvement to the title"},
-        {"type": "add_subtask", "suggestion": "suggested subtask to break this down"}
+        {
+          "type": string (required, one of: "add_field", "improve_title", "add_subtask", "general"),
+          "field": string (optional, field name for add_field suggestions),
+          "suggestion": string (required, 1-1000 chars, the suggestion content)
+        }
       ]
+      Array must have 1-5 items.
 
-      Respond ONLY with valid JSON array.
+      Respond ONLY with valid JSON array. No markdown, no code blocks, no explanation.
     PROMPT
 
     def generate(card)
@@ -60,10 +63,23 @@ module CardIntelligence
     private
 
     def parse_suggestions(response, card)
-      json = response.parsed_json
-      return [] unless json.is_a?(Array)
+      validation = response.validated_json(:suggestions)
 
-      json.filter_map do |item|
+      suggestions_data = if validation.valid?
+        validation.data
+      else
+        # Fall back to unvalidated JSON if schema validation fails
+        json = response.parsed_json
+        if json.is_a?(Array)
+          Rails.logger.warn("SuggestionGenerator: Schema validation failed, using unvalidated JSON: #{validation.error_messages}")
+          json
+        else
+          Rails.logger.warn("SuggestionGenerator: Invalid response format")
+          return []
+        end
+      end
+
+      suggestions_data.filter_map do |item|
         next unless item.is_a?(Hash) && item["suggestion"].present?
 
         AiSuggestion.new(

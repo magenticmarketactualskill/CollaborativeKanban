@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ContentAnalysis",
+  "description": "Schema for card content analysis LLM response",
+  "type": "object",
+  "properties": {
+    "summary": {
+      "type": "string",
+      "description": "One sentence summary of what the card is about",
+      "minLength": 1,
+      "maxLength": 500
+    },
+    "complexity_score": {
+      "type": "integer",
+      "description": "Complexity rating from 1-5",
+      "minimum": 1,
+      "maximum": 5
+    },
+    "estimated_effort": {
+      "type": "string",
+      "description": "Effort level estimate",
+      "enum": ["low", "medium", "high"]
+    },
+    "potential_blockers": {
+      "type": "array",
+      "description": "List of potential issues or dependencies",
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 10
+    },
+    "suggested_subtasks": {
+      "type": "array",
+      "description": "List of subtasks if the card could be broken down",
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 10
+    },
+    "related_topics": {
+      "type": "array",
+      "description": "List of related areas, technologies, or concepts",
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 10
+    }
+  },
+  "required": ["summary", "complexity_score", "estimated_effort"],
+  "additionalProperties": false
+}

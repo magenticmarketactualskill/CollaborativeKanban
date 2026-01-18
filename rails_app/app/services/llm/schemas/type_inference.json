@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TypeInference",
+  "description": "Schema for card type inference LLM response",
+  "type": "object",
+  "properties": {
+    "card_type": {
+      "type": "string",
+      "description": "The inferred card type",
+      "pattern": "^[a-z_]+$"
+    },
+    "confidence": {
+      "type": "string",
+      "description": "Confidence level of the inference",
+      "enum": ["high", "medium", "low"]
+    },
+    "reasoning": {
+      "type": "string",
+      "description": "Brief explanation for the type inference",
+      "maxLength": 500
+    }
+  },
+  "required": ["card_type"],
+  "additionalProperties": false
+}

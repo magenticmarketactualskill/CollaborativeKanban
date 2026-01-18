@@ -12,7 +12,14 @@ module CardIntelligence
       Title: %{title}
       Description: %{description}
 
-      Respond with ONLY the card type name (e.g., "task", "bug", "checklist", "milestone"). No explanation needed.
+      You MUST respond with valid JSON matching this schema:
+      {
+        "card_type": string (required, lowercase with underscores only, e.g. "task", "bug", "checklist"),
+        "confidence": string (optional, one of: "high", "medium", "low"),
+        "reasoning": string (optional, max 500 chars, brief explanation)
+      }
+
+      Respond ONLY with valid JSON. No markdown, no code blocks, no explanation.
     PROMPT
 
     def initialize
@@ -70,14 +77,33 @@ module CardIntelligence
       response = Llm::Router.route(:type_inference, prompt)
 
       if response.success?
+        parse_inference_response(response)
+      else
+        Result.new(type: @registry.default_type, confidence: :low, method: :fallback, error: response.error)
+      end
+    end
+
+    def parse_inference_response(response)
+      validation = response.validated_json(:type_inference)
+
+      if validation.valid?
+        json = validation.data
+        inferred_type = json["card_type"]
+        confidence = json["confidence"]&.to_sym || :medium
+
+        if @registry.valid_type?(inferred_type)
+          Result.new(type: inferred_type, confidence: confidence, method: :llm, provider: response.provider)
+        else
+          Result.new(type: @registry.default_type, confidence: :low, method: :fallback)
+        end
+      else
+        # Fall back to raw text parsing for backwards compatibility
         inferred_type = response.content.strip.downcase.gsub(/[^a-z_]/, "")
         if @registry.valid_type?(inferred_type)
           Result.new(type: inferred_type, confidence: :medium, method: :llm, provider: response.provider)
         else
           Result.new(type: @registry.default_type, confidence: :low, method: :fallback)
         end
-      else
-        Result.new(type: @registry.default_type, confidence: :low, method: :fallback, error: response.error)
       end
     end
 

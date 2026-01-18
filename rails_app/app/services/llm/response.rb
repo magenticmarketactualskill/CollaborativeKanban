@@ -41,6 +41,29 @@ module Llm
       nil
     end
 
+    # Parse and validate JSON against a schema
+    # Returns ValidationResult with valid?, data, and errors
+    def validated_json(schema_name)
+      json = parsed_json
+      return SchemaValidator::ValidationResult.new(valid: false, errors: [{ "error" => "Invalid JSON" }]) unless json
+
+      SchemaValidator.validate(json, schema_name)
+    end
+
+    # Parse and validate JSON, returning data or nil
+    def validated_json!(schema_name)
+      result = validated_json(schema_name)
+      result.valid? ? result.data : nil
+    end
+
+    # Check if parsed JSON conforms to schema
+    def valid_json?(schema_name)
+      json = parsed_json
+      return false unless json
+
+      SchemaValidator.valid?(json, schema_name)
+    end
+
     # Extract content between markers
     def extract(start_marker, end_marker = nil)
       return nil unless success?

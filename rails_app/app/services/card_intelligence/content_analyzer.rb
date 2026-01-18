@@ -11,17 +11,17 @@ module CardIntelligence
       Priority: %{priority}
       Due Date: %{due_date}
 
-      Provide your analysis in the following JSON format:
+      You MUST respond with valid JSON matching this exact schema:
       {
-        "summary": "One sentence summary of what this card is about",
-        "complexity_score": 1-5,
-        "estimated_effort": "low/medium/high",
-        "potential_blockers": ["list of potential issues or dependencies"],
-        "suggested_subtasks": ["list of subtasks if this card could be broken down"],
-        "related_topics": ["list of related areas, technologies, or concepts"]
+        "summary": string (required, 1-500 chars, one sentence summary),
+        "complexity_score": integer (required, 1-5),
+        "estimated_effort": string (required, one of: "low", "medium", "high"),
+        "potential_blockers": array of strings (optional, max 10 items),
+        "suggested_subtasks": array of strings (optional, max 10 items),
+        "related_topics": array of strings (optional, max 10 items)
       }
 
-      Respond ONLY with valid JSON, no additional text.
+      Respond ONLY with valid JSON. No markdown, no code blocks, no explanation.
     PROMPT
 
     def analyze(card)
@@ -54,9 +54,10 @@ module CardIntelligence
     private
 
     def parse_analysis(response)
-      json = response.parsed_json
+      validation = response.validated_json(:content_analysis)
 
-      if json
+      if validation.valid?
+        json = validation.data
         AnalysisResult.new(
           summary: json["summary"],
           complexity_score: json["complexity_score"]&.to_i,
@@ -68,12 +69,28 @@ module CardIntelligence
           latency: response.latency
         )
       else
-        # Try to extract useful content even if not valid JSON
-        AnalysisResult.new(
-          summary: response.content.first(200),
-          provider: response.provider,
-          latency: response.latency
-        )
+        # Try unvalidated JSON first, then fall back to raw content
+        json = response.parsed_json
+        if json&.dig("summary")
+          Rails.logger.warn("ContentAnalyzer: Schema validation failed, using unvalidated JSON: #{validation.error_messages}")
+          AnalysisResult.new(
+            summary: json["summary"],
+            complexity_score: json["complexity_score"]&.to_i,
+            estimated_effort: json["estimated_effort"],
+            potential_blockers: Array(json["potential_blockers"]),
+            suggested_subtasks: Array(json["suggested_subtasks"]),
+            related_topics: Array(json["related_topics"]),
+            provider: response.provider,
+            latency: response.latency
+          )
+        else
+          Rails.logger.warn("ContentAnalyzer: Invalid response, using raw content fallback")
+          AnalysisResult.new(
+            summary: response.content.first(200),
+            provider: response.provider,
+            latency: response.latency
+          )
+        end
       end
     end
 
