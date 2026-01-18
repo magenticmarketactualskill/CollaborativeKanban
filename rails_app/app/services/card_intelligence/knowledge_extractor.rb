@@ -319,22 +319,12 @@ module CardIntelligence
       entity = domain.entities.named(name).first
       return entity if entity
 
-      # Create new entity with inferred type
+      # Create new entity with inferred type using gem's type inferrer
       domain.entities.create!(
         name: name,
-        entity_type: infer_entity_type(name),
+        entity_type: EntityKnowledge::Extraction::TypeInferrer.infer(name),
         confidence: 0.7
       )
-    end
-
-    def infer_entity_type(name)
-      # Simple heuristics for entity type inference
-      return "person" if name.match?(/^[A-Z][a-z]+ [A-Z][a-z]+$/) # "John Smith"
-      return "system" if name.match?(/service|api|server|database/i)
-      return "artifact" if name.match?(/controller|model|component|module/i)
-      return "event" if name.match?(/sprint|release|meeting|review/i)
-
-      "concept"
     end
   end
 end

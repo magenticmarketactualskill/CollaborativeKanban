@@ -399,19 +399,11 @@ class KnowledgeExtractionTask < ApplicationTask
         domain.entities.named(name).first ||
         domain.entities.create!(
           name: name,
-          entity_type: infer_entity_type(name),
+          entity_type: EntityKnowledge::Extraction::TypeInferrer.infer(name),
           confidence: 0.7
         )
     rescue ActiveRecord::RecordInvalid
       nil
-    end
-
-    def infer_entity_type(name)
-      return "person" if name.match?(/^[A-Z][a-z]+ [A-Z][a-z]+$/)
-      return "system" if name.match?(/service|api|server|database/i)
-      return "artifact" if name.match?(/controller|model|component|module/i)
-
-      "concept"
     end
   end
 

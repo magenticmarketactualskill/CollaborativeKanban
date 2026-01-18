@@ -7,6 +7,12 @@ GIT
       dry-monads (~> 1.6)
 
 PATH
+  remote: vendor/gem/entity_knowledge
+  specs:
+    entity_knowledge (0.1.0)
+      rails (>= 7.0)
+
+PATH
   remote: vendor/gem/llm_client
   specs:
     llm_client (0.1.0)
@@ -434,6 +440,7 @@ DEPENDENCIES
   bundler-audit
   cssbundling-rails
   debug
+  entity_knowledge!
   faraday (~> 2.9)
   faraday-retry (~> 2.2)
   image_processing (~> 1.2)
@@ -496,6 +503,7 @@ CHECKSUMS
   dry-initializer (3.2.0) sha256=37d59798f912dc0a1efe14a4db4a9306989007b302dcd5f25d0a2a20c166c4e3
   dry-monads (1.9.0) sha256=9348a67b5c862c7a876342dbd94737fdf3fb3c17978382cf6801a85b27215816
   ed25519 (1.4.0) sha256=16e97f5198689a154247169f3453ef4cfd3f7a47481fde0ae33206cdfdcac506
+  entity_knowledge (0.1.0)
   erb (6.0.1) sha256=28ecdd99c5472aebd5674d6061e3c6b0a45c049578b071e5a52c2a7f13c197e5
   erubi (1.13.1) sha256=a082103b0885dbc5ecf1172fede897f9ebdb745a4b97a5e8dc63953db1ee4ad9
   et-orbi (1.4.0) sha256=6c7e3c90779821f9e3b324c5e96fda9767f72995d6ae435b96678a4f3e2de8bc
