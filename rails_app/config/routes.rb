@@ -11,7 +11,7 @@ Rails.application.routes.draw do
 
   # Settings namespace for MCP and Skills
   namespace :settings do
-    resource :mcp_server, only: [:show, :update] do
+    resource :mcp_server, only: [:show, :update], controller: 'mcp_server' do
       post :test_connection, on: :collection
     end
 

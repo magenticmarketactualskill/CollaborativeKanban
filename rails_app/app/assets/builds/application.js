@@ -8966,6 +8966,142 @@ var settings_menu_controller_default = class extends Controller {
   }
 };
 
+// app/javascript/controllers/routing_dashboard_controller.js
+var routing_dashboard_controller_default = class extends Controller {
+  static targets = ["activityFeed", "statisticsCards", "refreshIcon"];
+  static values = {
+    refreshInterval: { type: Number, default: 3e4 }
+  };
+  connect() {
+    this.startAutoRefresh();
+  }
+  disconnect() {
+    this.stopAutoRefresh();
+  }
+  startAutoRefresh() {
+    this.refreshTimer = setInterval(() => {
+      this.refreshStatistics();
+    }, this.refreshIntervalValue);
+  }
+  stopAutoRefresh() {
+    if (this.refreshTimer) {
+      clearInterval(this.refreshTimer);
+    }
+  }
+  async refresh() {
+    if (this.hasRefreshIconTarget) {
+      this.refreshIconTarget.classList.add("animate-spin");
+    }
+    await Promise.all([
+      this.refreshStatistics(),
+      this.refreshActivityFeed()
+    ]);
+    if (this.hasRefreshIconTarget) {
+      setTimeout(() => {
+        this.refreshIconTarget.classList.remove("animate-spin");
+      }, 500);
+    }
+  }
+  async refreshStatistics() {
+    try {
+      const response = await fetch("/settings/routing/statistics", {
+        headers: {
+          "Accept": "application/json",
+          "X-CSRF-Token": this.csrfToken
+        }
+      });
+      if (response.ok) {
+        const stats = await response.json();
+        this.updateStatisticsDisplay(stats);
+      }
+    } catch (error2) {
+      console.error("Failed to refresh statistics:", error2);
+    }
+  }
+  async refreshActivityFeed() {
+    if (this.hasActivityFeedTarget) {
+      const frame = this.activityFeedTarget;
+      if (frame.reload) {
+        frame.reload();
+      } else {
+        const currentSrc = frame.src || window.location.href;
+        frame.src = currentSrc;
+      }
+    }
+  }
+  updateStatisticsDisplay(stats) {
+    if (this.hasStatisticsCardsTarget) {
+      const cards = this.statisticsCardsTarget.querySelectorAll(".text-2xl");
+      if (cards[0]) cards[0].textContent = stats.llm.total;
+      if (cards[1]) cards[1].textContent = stats.mcp.total;
+      if (cards[2]) cards[2].textContent = `${stats.llm.avg_latency}ms`;
+      if (cards[3]) cards[3].textContent = stats.llm.total_tokens.toLocaleString();
+    }
+  }
+  get csrfToken() {
+    return document.querySelector('meta[name="csrf-token"]')?.content;
+  }
+};
+
+// app/javascript/controllers/activity_filter_controller.js
+var activity_filter_controller_default = class extends Controller {
+  static targets = ["callType", "taskType", "status", "search", "results"];
+  connect() {
+    this.debounceTimer = null;
+  }
+  filter() {
+    const params = new URLSearchParams();
+    if (this.hasCallTypeTarget && this.callTypeTarget.value) {
+      params.set("call_type", this.callTypeTarget.value);
+    }
+    if (this.hasTaskTypeTarget && this.taskTypeTarget.value) {
+      params.set("task_type", this.taskTypeTarget.value);
+    }
+    if (this.hasStatusTarget && this.statusTarget.value) {
+      params.set("status", this.statusTarget.value);
+    }
+    if (this.hasSearchTarget && this.searchTarget.value) {
+      params.set("tool_name", this.searchTarget.value);
+    }
+    this.loadResults(params);
+  }
+  debounceFilter() {
+    clearTimeout(this.debounceTimer);
+    this.debounceTimer = setTimeout(() => this.filter(), 300);
+  }
+  async loadResults(params) {
+    const url = `/settings/routing/activity?${params.toString()}`;
+    if (this.hasResultsTarget) {
+      this.resultsTarget.innerHTML = `
+        <div class="px-4 py-8 text-center">
+          <svg class="animate-spin h-6 w-6 mx-auto text-blue-600" viewBox="0 0 24 24" fill="none">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+        </div>
+      `;
+      try {
+        const response = await fetch(url, {
+          headers: {
+            "Accept": "text/html",
+            "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')?.content
+          }
+        });
+        if (response.ok) {
+          const html = await response.text();
+          this.resultsTarget.innerHTML = html;
+        }
+      } catch (error2) {
+        this.resultsTarget.innerHTML = `
+          <div class="px-4 py-8 text-center text-red-500">
+            <p class="text-sm">Failed to load results</p>
+          </div>
+        `;
+      }
+    }
+  }
+};
+
 // app/javascript/controllers/index.js
 application.register("draggable", draggable_controller_default);
 application.register("drawer", drawer_controller_default);
@@ -8973,6 +9109,8 @@ application.register("hello", hello_controller_default);
 application.register("kanban", kanban_controller_default);
 application.register("loading-progress", loading_progress_controller_default);
 application.register("settings-menu", settings_menu_controller_default);
+application.register("routing-dashboard", routing_dashboard_controller_default);
+application.register("activity-filter", activity_filter_controller_default);
 /*! Bundled license information:
 
 @hotwired/turbo/dist/turbo.es2017-esm.js:
