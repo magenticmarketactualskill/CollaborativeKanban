@@ -121,12 +121,14 @@ class ContentAnalysisTask < ApplicationTask
     def perform_work
       llm_result = task.result_for(CallLlm)
       response = llm_result[:response]
-      json = response.parsed_json
 
       # Broadcast that we're moving to saving stage
       task.broadcast_stage_progress(ContentAnalysisTask::STAGE_SAVING)
 
-      if json
+      validation = response.validated_json(:content_analysis)
+
+      if validation.valid?
+        json = validation.data
         Success(
           summary: json["summary"],
           complexity_score: json["complexity_score"]&.to_i,
@@ -139,19 +141,36 @@ class ContentAnalysisTask < ApplicationTask
           stage: name
         )
       else
-        # Fallback: extract useful content even if not valid JSON
-        Success(
-          summary: llm_result[:content].to_s.first(200),
-          complexity_score: nil,
-          estimated_effort: nil,
-          potential_blockers: [],
-          suggested_subtasks: [],
-          related_topics: [],
-          provider: llm_result[:provider],
-          latency: llm_result[:latency],
-          fallback: true,
-          stage: name
-        )
+        # Fallback: try raw parsed JSON without validation
+        json = response.parsed_json
+        if json
+          Success(
+            summary: json["summary"] || llm_result[:content].to_s.first(200),
+            complexity_score: json["complexity_score"]&.to_i,
+            estimated_effort: json["estimated_effort"],
+            potential_blockers: Array(json["potential_blockers"]),
+            suggested_subtasks: Array(json["suggested_subtasks"]),
+            related_topics: Array(json["related_topics"]),
+            provider: llm_result[:provider],
+            latency: llm_result[:latency],
+            fallback: true,
+            stage: name
+          )
+        else
+          # Last resort: extract useful content even if not valid JSON
+          Success(
+            summary: llm_result[:content].to_s.first(200),
+            complexity_score: nil,
+            estimated_effort: nil,
+            potential_blockers: [],
+            suggested_subtasks: [],
+            related_topics: [],
+            provider: llm_result[:provider],
+            latency: llm_result[:latency],
+            fallback: true,
+            stage: name
+          )
+        end
       end
     end
   end

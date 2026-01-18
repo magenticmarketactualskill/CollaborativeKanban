@@ -126,17 +126,22 @@ class SuggestionGenerationTask < ApplicationTask
     def perform_work
       llm_result = task.result_for(GenerateSuggestions)
       response = llm_result[:response]
-      json = response.parsed_json
 
       # Broadcast that we're moving to saving stage
       task.broadcast_stage_progress(SuggestionGenerationTask::STAGE_SAVING)
 
-      unless json.is_a?(Array)
-        return Success(suggestions: [], provider: llm_result[:provider], stage: name)
+      validation = response.validated_json(:suggestions)
+
+      suggestions_data = if validation.valid?
+        validation.data
+      else
+        # Fallback to raw parsed JSON
+        json = response.parsed_json
+        json.is_a?(Array) ? json : []
       end
 
       card = task.card
-      suggestions = json.filter_map do |item|
+      suggestions = suggestions_data.filter_map do |item|
         next unless item.is_a?(Hash) && item["suggestion"].present?
 
         {

@@ -100,7 +100,12 @@ class TypeInferenceTask < ApplicationTask
       Title: %{title}
       Description: %{description}
 
-      Respond with ONLY the card type name (e.g., "task", "bug", "checklist", "milestone"). No explanation needed.
+      Respond with a JSON object containing:
+      - card_type: the type name (e.g., "task", "bug", "checklist", "milestone")
+      - confidence: your confidence level ("high", "medium", or "low")
+      - reasoning: brief explanation (optional)
+
+      Respond ONLY with valid JSON, no additional text.
     PROMPT
 
     def preconditions_met?
@@ -124,22 +129,48 @@ class TypeInferenceTask < ApplicationTask
       response = Llm::Router.route(:type_inference, prompt)
 
       if response.success?
-        inferred_type = response.content.strip.downcase.gsub(/[^a-z_]/, "")
-        if registry.valid_type?(inferred_type)
-          Success(
-            type: inferred_type,
-            confidence: :medium,
-            method: :llm,
-            provider: response.provider,
-            stage: name
-          )
+        validation = response.validated_json(:type_inference)
+
+        if validation.valid?
+          json = validation.data
+          inferred_type = json["card_type"]&.strip&.downcase&.gsub(/[^a-z_]/, "")
+
+          if registry.valid_type?(inferred_type)
+            Success(
+              type: inferred_type,
+              confidence: json["confidence"]&.to_sym || :medium,
+              method: :llm,
+              provider: response.provider,
+              stage: name
+            )
+          else
+            Success(
+              type: registry.default_type,
+              confidence: :low,
+              method: :fallback,
+              stage: name
+            )
+          end
         else
-          Success(
-            type: registry.default_type,
-            confidence: :low,
-            method: :fallback,
-            stage: name
-          )
+          # Fallback: try to extract type from raw content
+          inferred_type = response.content.strip.downcase.gsub(/[^a-z_]/, "")
+          if registry.valid_type?(inferred_type)
+            Success(
+              type: inferred_type,
+              confidence: :low,
+              method: :llm,
+              provider: response.provider,
+              fallback: true,
+              stage: name
+            )
+          else
+            Success(
+              type: registry.default_type,
+              confidence: :low,
+              method: :fallback,
+              stage: name
+            )
+          end
         end
       else
         Success(

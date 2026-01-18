@@ -134,11 +134,9 @@ class KnowledgeExtractionTask < ApplicationTask
       ## Instructions
       Extract:
       1. **Entities**: Named things mentioned in the card
-         - People (names, roles)
-         - Systems (services, APIs, databases)
-         - Concepts (technologies, patterns, standards)
-         - Artifacts (files, classes, modules)
-         - Organizations (teams, companies)
+         - People (person), Systems (system), Concepts (concept)
+         - Locations (location), Organizations (organization)
+         - Artifacts (artifact), Events (event), Metrics (metric)
 
       2. **Facts**: Relationships or attributes about entities
          - Relationships between entities: "X depends on Y", "A owns B"
@@ -149,6 +147,18 @@ class KnowledgeExtractionTask < ApplicationTask
       - Use clear, canonical names for new entities
       - Assign confidence scores (0.0-1.0) based on certainty
       - Only include facts that are clearly stated or strongly implied
+
+      Respond with a JSON object containing:
+      {
+        "entities": [
+          {"name": "...", "entity_type": "person|system|concept|location|organization|artifact|event|metric", "description": "...", "confidence": 0.0-1.0, "is_new": true/false, "existing_entity_name": "if is_new is false"}
+        ],
+        "facts": [
+          {"subject": "entity name", "predicate": "relationship", "object": "value or entity name", "object_is_entity": true/false, "object_type": "string|date|number|boolean (if literal)", "confidence": 0.0-1.0, "negated": false}
+        ]
+      }
+
+      Respond ONLY with valid JSON, no additional text.
     PROMPT
 
     def preconditions_met?

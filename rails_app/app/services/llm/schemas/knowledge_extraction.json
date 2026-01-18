@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Knowledge Extraction Response",
+  "description": "Schema for LLM responses when extracting entities and facts from card content",
+  "type": "object",
+  "required": ["entities", "facts"],
+  "properties": {
+    "entities": {
+      "type": "array",
+      "description": "Named entities extracted from the card",
+      "items": {
+        "type": "object",
+        "required": ["name", "entity_type", "confidence", "is_new"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Canonical name of the entity",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "entity_type": {
+            "type": "string",
+            "description": "Type classification of the entity",
+            "enum": ["person", "system", "concept", "location", "organization", "artifact", "event", "metric"]
+          },
+          "description": {
+            "type": "string",
+            "description": "Brief description of what this entity represents",
+            "maxLength": 500
+          },
+          "aliases": {
+            "type": "array",
+            "description": "Alternative names or spellings for this entity",
+            "items": {
+              "type": "string"
+            }
+          },
+          "confidence": {
+            "type": "number",
+            "description": "Confidence score for this extraction (0.0 to 1.0)",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "is_new": {
+            "type": "boolean",
+            "description": "Whether this is a new entity or matches an existing one"
+          },
+          "existing_entity_name": {
+            "type": "string",
+            "description": "If is_new is false, the name of the existing entity this matches"
+          },
+          "mention_text": {
+            "type": "string",
+            "description": "The exact text in the card that mentions this entity"
+          }
+        }
+      }
+    },
+    "facts": {
+      "type": "array",
+      "description": "Facts (relationships or attributes) extracted from the card",
+      "items": {
+        "type": "object",
+        "required": ["subject", "predicate", "object", "object_is_entity", "confidence"],
+        "properties": {
+          "subject": {
+            "type": "string",
+            "description": "The entity that is the subject of this fact",
+            "minLength": 1
+          },
+          "predicate": {
+            "type": "string",
+            "description": "The relationship or attribute name",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "object": {
+            "type": "string",
+            "description": "The object of the relationship (entity name or literal value)",
+            "minLength": 1
+          },
+          "object_is_entity": {
+            "type": "boolean",
+            "description": "Whether the object is another entity (true) or a literal value (false)"
+          },
+          "object_type": {
+            "type": "string",
+            "description": "If object is a literal, its data type",
+            "enum": ["string", "date", "number", "boolean"]
+          },
+          "confidence": {
+            "type": "number",
+            "description": "Confidence score for this fact (0.0 to 1.0)",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "negated": {
+            "type": "boolean",
+            "description": "Whether this is a negative assertion (e.g., 'does NOT depend on')",
+            "default": false
+          },
+          "evidence_text": {
+            "type": "string",
+            "description": "The exact text in the card that supports this fact"
+          }
+        }
+      }
+    },
+    "suggested_domain": {
+      "type": "string",
+      "description": "Suggested domain for new entities if none matches existing domains"
+    }
+  },
+  "additionalProperties": false
+}
