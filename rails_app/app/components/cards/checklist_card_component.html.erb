@@ -1,0 +1,93 @@
+<div id="<%= dom_id %>"
+     class="kanban-card bg-white rounded-lg shadow-sm p-3 cursor-pointer hover:shadow-md transition-shadow border-l-4 <%= border_color_class %>"
+     data-card-id="<%= card.id %>"
+     data-controller="draggable"
+     data-action="click->kanban#showCardDetail"
+     draggable="true"
+     data-draggable-target="item">
+
+  <%# Card Type Indicator %>
+  <div class="flex items-center gap-1 mb-1">
+    <span class="inline-flex items-center gap-1 text-xs text-<%= card_type_color %>-600">
+      <%= render_icon(card_type_icon, classes: "h-3 w-3") %>
+      <span><%= card_type_display_name %></span>
+    </span>
+  </div>
+
+  <%# Title %>
+  <h4 class="text-sm font-medium text-gray-900"><%= card.title %></h4>
+
+  <%# Description %>
+  <% if card.description.present? %>
+    <p class="mt-1 text-xs text-gray-500 line-clamp-2"><%= card.description %></p>
+  <% end %>
+
+  <%# Checklist Items Preview %>
+  <% if items.any? %>
+    <div class="mt-2 space-y-1">
+      <% visible_items.each do |item| %>
+        <div class="flex items-center gap-2 text-xs">
+          <% if item[:completed] %>
+            <span class="text-green-500">
+              <%= render_icon("check-circle", classes: "h-3 w-3") %>
+            </span>
+            <span class="text-gray-400 line-through"><%= item[:text] %></span>
+          <% else %>
+            <span class="w-3 h-3 rounded-full border border-gray-300"></span>
+            <span class="text-gray-600"><%= item[:text] %></span>
+          <% end %>
+        </div>
+      <% end %>
+      <% if remaining_items_count > 0 %>
+        <div class="text-xs text-gray-400">
+          +<%= remaining_items_count %> more item<%= remaining_items_count == 1 ? "" : "s" %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <%# Progress Bar %>
+  <% if show_progress? %>
+    <div class="mt-2">
+      <div class="flex items-center justify-between text-xs text-gray-500 mb-1">
+        <span><%= completed_items_count %>/<%= total_items_count %></span>
+        <span><%= progress_percentage %>%</span>
+      </div>
+      <div class="h-1.5 bg-gray-200 rounded-full overflow-hidden">
+        <div class="h-full <%= all_completed? ? 'bg-green-500' : 'bg-green-400' %> transition-all" style="width: <%= progress_percentage %>%"></div>
+      </div>
+    </div>
+  <% end %>
+
+  <%# Footer: Priority, Due Date, Assignees %>
+  <div class="mt-3 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <span class="inline-flex items-center rounded px-1.5 py-0.5 text-xs font-medium <%= priority_classes %>">
+        <%= card.priority.capitalize %>
+      </span>
+
+      <% if card.due_date.present? %>
+        <span class="inline-flex items-center gap-1 text-xs <%= due_date_classes %>">
+          <%= render_icon("calendar", classes: "h-3 w-3") %>
+          <%= card.due_date.strftime("%b %d") %>
+        </span>
+      <% end %>
+    </div>
+
+    <%# Assignees %>
+    <% if card.assignees.any? %>
+      <div class="flex -space-x-1">
+        <% card.assignees.first(3).each do |assignee| %>
+          <div class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-medium ring-1 ring-white" title="<%= assignee.name %>">
+            <%= assignee.initials %>
+          </div>
+        <% end %>
+        <% if card.assignees.count > 3 %>
+          <div class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-gray-200 text-gray-600 text-xs font-medium ring-1 ring-white">
+            +<%= card.assignees.count - 3 %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>

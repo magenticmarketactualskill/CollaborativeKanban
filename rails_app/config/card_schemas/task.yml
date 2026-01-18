@@ -1,0 +1,40 @@
+display_name: Task
+icon: check-circle
+color: blue
+keywords:
+  - todo
+  - task
+  - action
+  - do
+  - complete
+  - work
+
+fields:
+  - name: status
+    display_name: Status
+    type: select
+    options:
+      - pending
+      - in_progress
+      - blocked
+      - completed
+    default: pending
+    required: false
+
+  - name: estimated_hours
+    display_name: Estimated Hours
+    type: integer
+    required: false
+
+  - name: actual_hours
+    display_name: Actual Hours
+    type: integer
+    required: false
+
+  - name: tags
+    display_name: Tags
+    type: array
+    required: false
+    default: []
+
+component_class: Cards::TaskCardComponent

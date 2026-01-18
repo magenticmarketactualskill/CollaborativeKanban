@@ -1,0 +1,39 @@
+display_name: Milestone
+icon: flag
+color: purple
+keywords:
+  - milestone
+  - goal
+  - target
+  - release
+  - deadline
+  - launch
+  - phase
+  - version
+
+fields:
+  - name: target_date
+    display_name: Target Date
+    type: string
+    required: false
+
+  - name: progress_percentage
+    display_name: Progress Percentage
+    type: integer
+    default: 0
+    validations:
+      min: 0
+      max: 100
+
+  - name: linked_cards
+    display_name: Linked Cards
+    type: array
+    required: false
+    default: []
+
+  - name: success_criteria
+    display_name: Success Criteria
+    type: string
+    required: false
+
+component_class: Cards::MilestoneCardComponent

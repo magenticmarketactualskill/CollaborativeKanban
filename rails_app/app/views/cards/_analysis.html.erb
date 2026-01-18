@@ -1,0 +1,47 @@
+<div id="card-<%= card.id %>-analysis" class="p-3 bg-blue-50 rounded-lg">
+  <h4 class="text-sm font-medium text-blue-900 mb-2">AI Analysis</h4>
+
+  <% if analysis.success? %>
+    <p class="text-sm text-blue-800 mb-2"><%= analysis.summary %></p>
+
+    <div class="grid grid-cols-2 gap-2 text-xs">
+      <% if analysis.complexity_score %>
+        <div>
+          <span class="text-blue-600">Complexity:</span>
+          <span class="font-medium"><%= analysis.complexity_score %>/5</span>
+        </div>
+      <% end %>
+
+      <% if analysis.estimated_effort %>
+        <div>
+          <span class="text-blue-600">Effort:</span>
+          <span class="font-medium"><%= analysis.estimated_effort.capitalize %></span>
+        </div>
+      <% end %>
+    </div>
+
+    <% if analysis.potential_blockers.any? %>
+      <div class="mt-2">
+        <span class="text-xs text-blue-600">Potential blockers:</span>
+        <ul class="text-xs text-blue-800 list-disc list-inside">
+          <% analysis.potential_blockers.first(3).each do |blocker| %>
+            <li><%= blocker %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <% if analysis.suggested_subtasks.any? %>
+      <div class="mt-2">
+        <span class="text-xs text-blue-600">Suggested subtasks:</span>
+        <ul class="text-xs text-blue-800 list-disc list-inside">
+          <% analysis.suggested_subtasks.first(3).each do |subtask| %>
+            <li><%= subtask %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+  <% else %>
+    <p class="text-sm text-blue-700">Analysis not available</p>
+  <% end %>
+</div>

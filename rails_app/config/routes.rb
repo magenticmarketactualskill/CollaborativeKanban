@@ -15,6 +15,16 @@ Rails.application.routes.draw do
         patch :move
         post :assign
         delete :unassign
+        post :analyze
+        post :infer_type
+        get :suggestions
+      end
+
+      resources :ai_suggestions, only: [] do
+        member do
+          post :accept
+          delete :dismiss
+        end
       end
     end
 

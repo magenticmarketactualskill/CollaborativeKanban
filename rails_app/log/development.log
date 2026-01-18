@@ -1645,3 +1645,64 @@ Processing by BoardsController#show as HTML
 Completed 200 OK in 16ms (Views: 9.5ms | ActiveRecord: 2.1ms (10 queries, 1 cached) | GC: 1.5ms)
 
 
+DEPRECATION WARNING: ActiveSupport::Configurable is deprecated without replacement, and will be removed in Rails 8.2.
+
+You can emulate the previous behavior with `class_attribute`.
+ (called from <main> at /Users/ericlaquer/Documents/GitHub/CollaborativeKanban/rails_app/config/environment.rb:5)
+DEPRECATION WARNING: ActiveSupport::Configurable is deprecated without replacement, and will be removed in Rails 8.2.
+
+You can emulate the previous behavior with `class_attribute`.
+ (called from <main> at /Users/ericlaquer/Documents/GitHub/CollaborativeKanban/rails_app/config/environment.rb:5)
+DEPRECATION WARNING: ActiveSupport::Configurable is deprecated without replacement, and will be removed in Rails 8.2.
+
+You can emulate the previous behavior with `class_attribute`.
+ (called from <main> at /Users/ericlaquer/Documents/GitHub/CollaborativeKanban/rails_app/config/environment.rb:5)
+DEPRECATION WARNING: ActiveSupport::Configurable is deprecated without replacement, and will be removed in Rails 8.2.
+
+You can emulate the previous behavior with `class_attribute`.
+ (called from <main> at /Users/ericlaquer/Documents/GitHub/CollaborativeKanban/rails_app/config/environment.rb:5)
+  [1m[36mActiveRecord::InternalMetadata Load (0.1ms)[0m  [1m[34mSELECT * FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = 'environment' ORDER BY "ar_internal_metadata"."key" ASC LIMIT 1 /*application='RailsApp'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.0ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='RailsApp'*/[0m
+Migrating to AddCardTypeToCards (20260118153448)
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='RailsApp'*/[0m
+  [1m[35m (0.7ms)[0m  [1m[35mALTER TABLE "cards" ADD "card_type" varchar DEFAULT 'task' NOT NULL /*application='RailsApp'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mALTER TABLE "cards" ADD "type_inference_confidence" varchar /*application='RailsApp'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mALTER TABLE "cards" ADD "type_inferred_at" datetime(6) /*application='RailsApp'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE INDEX "index_cards_on_card_type" ON "cards" ("card_type") /*application='RailsApp'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.0ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20260118153448') RETURNING "version" /*application='RailsApp'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='RailsApp'*/[0m
+Migrating to AddCardMetadataToCards (20260118153453)
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='RailsApp'*/[0m
+  [1m[35m (0.4ms)[0m  [1m[35mALTER TABLE "cards" ADD "card_metadata" json DEFAULT '{}' /*application='RailsApp'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mALTER TABLE "cards" ADD "ai_summary" text /*application='RailsApp'*/[0m
+  [1m[35m (0.1ms)[0m  [1m[35mALTER TABLE "cards" ADD "ai_analyzed_at" datetime(6) /*application='RailsApp'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.0ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20260118153453') RETURNING "version" /*application='RailsApp'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='RailsApp'*/[0m
+Migrating to CreateAiSuggestions (20260118153454)
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mBEGIN immediate TRANSACTION /*application='RailsApp'*/[0m
+  [1m[35m (0.3ms)[0m  [1m[35mCREATE TABLE "ai_suggestions" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "card_id" integer NOT NULL, "suggestion_type" varchar NOT NULL, "field_name" varchar, "content" text NOT NULL, "provider" varchar, "status" varchar DEFAULT 'pending', "acted_at" datetime(6), "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, CONSTRAINT "fk_rails_7b0270d59d"
+FOREIGN KEY ("card_id")
+  REFERENCES "cards" ("id")
+) /*application='RailsApp'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_ai_suggestions_on_card_id" ON "ai_suggestions" ("card_id") /*application='RailsApp'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_ai_suggestions_on_card_id_and_status" ON "ai_suggestions" ("card_id", "status") /*application='RailsApp'*/[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_ai_suggestions_on_suggestion_type" ON "ai_suggestions" ("suggestion_type") /*application='RailsApp'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.0ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES ('20260118153454') RETURNING "version" /*application='RailsApp'*/[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[35mCOMMIT TRANSACTION /*application='RailsApp'*/[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.0ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC /*application='RailsApp'*/[0m
+DEPRECATION WARNING: ActiveSupport::Configurable is deprecated without replacement, and will be removed in Rails 8.2.
+
+You can emulate the previous behavior with `class_attribute`.
+ (called from <main> at /Users/ericlaquer/Documents/GitHub/CollaborativeKanban/rails_app/config/environment.rb:5)
+DEPRECATION WARNING: ActiveSupport::Configurable is deprecated without replacement, and will be removed in Rails 8.2.
+
+You can emulate the previous behavior with `class_attribute`.
+ (called from <main> at /Users/ericlaquer/Documents/GitHub/CollaborativeKanban/rails_app/config/environment.rb:5)
+DEPRECATION WARNING: ActiveSupport::Configurable is deprecated without replacement, and will be removed in Rails 8.2.
+
+You can emulate the previous behavior with `class_attribute`.
+ (called from <main> at /Users/ericlaquer/Documents/GitHub/CollaborativeKanban/rails_app/config/environment.rb:5)
+DEPRECATION WARNING: ActiveSupport::Configurable is deprecated without replacement, and will be removed in Rails 8.2.
+
+You can emulate the previous behavior with `class_attribute`.
+ (called from <main> at /Users/ericlaquer/Documents/GitHub/CollaborativeKanban/rails_app/config/environment.rb:5)

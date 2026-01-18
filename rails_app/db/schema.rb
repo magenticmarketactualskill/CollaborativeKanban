@@ -10,7 +10,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2024_01_01_000007) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_18_153454) do
+  create_table "ai_suggestions", force: :cascade do |t|
+    t.datetime "acted_at"
+    t.integer "card_id", null: false
+    t.text "content", null: false
+    t.datetime "created_at", null: false
+    t.string "field_name"
+    t.string "provider"
+    t.string "status", default: "pending"
+    t.string "suggestion_type", null: false
+    t.datetime "updated_at", null: false
+    t.index ["card_id", "status"], name: "index_ai_suggestions_on_card_id_and_status"
+    t.index ["card_id"], name: "index_ai_suggestions_on_card_id"
+    t.index ["suggestion_type"], name: "index_ai_suggestions_on_suggestion_type"
+  end
+
   create_table "board_activities", force: :cascade do |t|
     t.string "activity_type", null: false
     t.integer "board_id", null: false
@@ -60,7 +75,11 @@ ActiveRecord::Schema[8.1].define(version: 2024_01_01_000007) do
   end
 
   create_table "cards", force: :cascade do |t|
+    t.datetime "ai_analyzed_at"
+    t.text "ai_summary"
     t.integer "board_id", null: false
+    t.json "card_metadata", default: {}
+    t.string "card_type", default: "task", null: false
     t.integer "column_id", null: false
     t.datetime "created_at", null: false
     t.integer "created_by_id", null: false
@@ -69,8 +88,11 @@ ActiveRecord::Schema[8.1].define(version: 2024_01_01_000007) do
     t.integer "position", default: 0
     t.string "priority", default: "medium"
     t.string "title", null: false
+    t.string "type_inference_confidence"
+    t.datetime "type_inferred_at"
     t.datetime "updated_at", null: false
     t.index ["board_id"], name: "index_cards_on_board_id"
+    t.index ["card_type"], name: "index_cards_on_card_type"
     t.index ["column_id", "position"], name: "index_cards_on_column_id_and_position"
     t.index ["column_id"], name: "index_cards_on_column_id"
     t.index ["created_by_id"], name: "index_cards_on_created_by_id"
@@ -100,6 +122,7 @@ ActiveRecord::Schema[8.1].define(version: 2024_01_01_000007) do
     t.index ["open_id"], name: "index_users_on_open_id", unique: true
   end
 
+  add_foreign_key "ai_suggestions", "cards"
   add_foreign_key "board_activities", "boards"
   add_foreign_key "board_activities", "cards"
   add_foreign_key "board_activities", "users"

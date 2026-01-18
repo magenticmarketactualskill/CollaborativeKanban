@@ -1,0 +1,25 @@
+display_name: Checklist
+icon: clipboard-list
+color: green
+keywords:
+  - checklist
+  - list
+  - items
+  - steps
+  - check
+  - checkbox
+  - todo list
+
+fields:
+  - name: items
+    display_name: Checklist Items
+    type: array
+    required: false
+    default: []
+
+  - name: show_progress
+    display_name: Show Progress Bar
+    type: boolean
+    default: true
+
+component_class: Cards::ChecklistCardComponent

@@ -3,7 +3,7 @@ class CardsController < ApplicationController
   before_action :set_board
   before_action :require_board_access!
   before_action :require_board_edit_access!, except: [:show]
-  before_action :set_card, only: [:show, :edit, :update, :destroy, :move, :assign, :unassign]
+  before_action :set_card, only: [:show, :edit, :update, :destroy, :move, :assign, :unassign, :analyze, :infer_type, :suggestions]
 
   def show
     respond_to do |format|
@@ -89,6 +89,46 @@ class CardsController < ApplicationController
     end
   end
 
+  def analyze
+    CardAnalysisJob.perform_later(@card.id)
+
+    respond_to do |format|
+      format.html { redirect_to board_card_path(@board, @card), notice: 'Analysis started.' }
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.replace(
+          "card-#{@card.id}-analysis",
+          partial: "cards/analysis_loading"
+        )
+      end
+      format.json { render json: { status: 'analyzing' } }
+    end
+  end
+
+  def infer_type
+    CardTypeInferenceJob.perform_later(@card.id)
+
+    respond_to do |format|
+      format.html { redirect_to board_card_path(@board, @card), notice: 'Type inference started.' }
+      format.turbo_stream
+      format.json { render json: { status: 'inferring' } }
+    end
+  end
+
+  def suggestions
+    SuggestionGenerationJob.perform_later(@card.id)
+
+    respond_to do |format|
+      format.html { redirect_to board_card_path(@board, @card), notice: 'Generating suggestions.' }
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.replace(
+          "card-#{@card.id}-suggestions",
+          partial: "cards/suggestions_loading"
+        )
+      end
+      format.json { render json: { status: 'generating' } }
+    end
+  end
+
   private
 
   def set_board
@@ -100,6 +140,6 @@ class CardsController < ApplicationController
   end
 
   def card_params
-    params.require(:card).permit(:title, :description, :priority, :due_date, :column_id)
+    params.require(:card).permit(:title, :description, :priority, :due_date, :column_id, :card_type, card_metadata: {})
   end
 end

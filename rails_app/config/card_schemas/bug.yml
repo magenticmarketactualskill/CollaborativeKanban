@@ -1,0 +1,52 @@
+display_name: Bug
+icon: bug
+color: red
+keywords:
+  - bug
+  - issue
+  - error
+  - defect
+  - fix
+  - broken
+  - crash
+  - problem
+  - failing
+
+fields:
+  - name: severity
+    display_name: Severity
+    type: select
+    options:
+      - low
+      - medium
+      - high
+      - critical
+    default: medium
+    required: false
+
+  - name: steps_to_reproduce
+    display_name: Steps to Reproduce
+    type: string
+    required: false
+
+  - name: expected_behavior
+    display_name: Expected Behavior
+    type: string
+    required: false
+
+  - name: actual_behavior
+    display_name: Actual Behavior
+    type: string
+    required: false
+
+  - name: affected_version
+    display_name: Affected Version
+    type: string
+    required: false
+
+  - name: browser
+    display_name: Browser/Environment
+    type: string
+    required: false
+
+component_class: Cards::BugCardComponent
