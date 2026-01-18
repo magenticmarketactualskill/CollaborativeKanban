@@ -27,7 +27,7 @@ module CardIntelligence
     end
 
     def initialize(llm_router: nil)
-      @llm_router = llm_router || Llm::Router.new
+      @llm_router = llm_router || LlmClient::Llm::Router.new
       @pattern_extractor = PatternExtractor.new
       @entity_linker = EntityLinker.new
     end

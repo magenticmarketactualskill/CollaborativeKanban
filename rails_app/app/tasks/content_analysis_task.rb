@@ -93,7 +93,7 @@ class ContentAnalysisTask < ApplicationTask
         due_date: input[:due_date]&.to_s || "(not set)"
       )
 
-      response = Llm::Router.route(:analysis, prompt)
+      response = LlmClient::Llm::Router.route(:analysis, prompt)
 
       if response.success?
         # Broadcast that we're moving to processing stage

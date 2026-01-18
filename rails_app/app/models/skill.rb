@@ -20,19 +20,36 @@ class Skill < ApplicationRecord
   scope :by_category, ->(cat) { where(category: cat) }
 
   def execute(params = {}, llm_config: nil)
-    Skills::Executor.new(self, params, llm_config: llm_config).call
+    LlmClient::Skills::Executor.new(to_skill_definition, params, user: user).call
   end
 
   def to_markdown
-    Skills::Exporter.new(self).to_markdown
+    LlmClient::Skills::Exporter.new(self).to_markdown
   end
 
   def self.from_markdown(content, user: nil, filename: nil)
-    Skills::Importer.new(content, user: user, filename: filename).import
+    definition = LlmClient::Skills::Importer.new(content, filename: filename).import
+    Skill.new(
+      user: user,
+      **definition.to_h.slice(
+        :name, :slug, :version, :description, :category,
+        :parameters, :prompt_template, :workflow_steps,
+        :dependencies, :metadata
+      ),
+      source: "imported",
+      source_file: filename
+    )
   end
 
   def self.from_markdown!(content, user: nil, filename: nil)
-    Skills::Importer.new(content, user: user, filename: filename).import!
+    skill = from_markdown(content, user: user, filename: filename)
+    skill.save!
+    skill
+  end
+
+  # Convert to gem's SkillDefinition PORO
+  def to_skill_definition
+    LlmClient::Skills::SkillDefinition.from_record(self)
   end
 
   def parameter_names

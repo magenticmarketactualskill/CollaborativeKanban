@@ -3,7 +3,7 @@ module Settings
     before_action :require_authentication
 
     def show
-      @routing_table = Llm::Router::ROUTING_TABLE
+      @routing_table = LlmClient::Llm::Router::ROUTING_TABLE
       @recent_llm_calls = LlmCall.recent.includes(:llm_configuration).limit(20)
       @recent_mcp_calls = McpToolCall.recent.includes(:mcp_client_connection).limit(20)
       @statistics = calculate_statistics
@@ -79,8 +79,8 @@ module Settings
 
     def check_provider_status
       {
-        ollama: Llm::Router.ollama_available?,
-        claude: Llm::Router.claude_available?
+        ollama: LlmClient::Llm::Router.ollama_available?,
+        claude: LlmClient::Llm::Router.claude_available?
       }
     rescue StandardError
       { ollama: false, claude: false }

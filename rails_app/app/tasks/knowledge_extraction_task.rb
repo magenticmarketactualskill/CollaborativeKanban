@@ -183,7 +183,7 @@ class KnowledgeExtractionTask < ApplicationTask
         existing_domains: existing_domains_text.presence || "General"
       )
 
-      response = Llm::Router.route(:knowledge_extraction, prompt)
+      response = LlmClient::Llm::Router.route(:knowledge_extraction, prompt)
 
       if response.success?
         task.broadcast_stage_progress(KnowledgeExtractionTask::STAGE_PERSISTING)

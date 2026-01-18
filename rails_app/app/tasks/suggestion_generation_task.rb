@@ -99,7 +99,7 @@ class SuggestionGenerationTask < ApplicationTask
         current_metadata: input[:current_metadata]
       )
 
-      response = Llm::Router.route(:suggestion, prompt)
+      response = LlmClient::Llm::Router.route(:suggestion, prompt)
 
       if response.success?
         # Broadcast that we're moving to processing stage

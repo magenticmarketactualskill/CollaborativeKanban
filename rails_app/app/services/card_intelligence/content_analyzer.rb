@@ -28,7 +28,7 @@ module CardIntelligence
         due_date: card.due_date&.to_s || "(not set)"
       )
 
-      response = Llm::Router.route(:analysis, prompt)
+      response = LlmClient::Llm::Router.route(:analysis, prompt)
 
       if response.success?
         parse_analysis(response)

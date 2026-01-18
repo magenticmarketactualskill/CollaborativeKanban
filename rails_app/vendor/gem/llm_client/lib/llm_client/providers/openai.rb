@@ -1,5 +1,7 @@
-module LlmConfig
-  module Provider
+# frozen_string_literal: true
+
+module LlmClient
+  module Providers
     class Openai < Base
       class << self
         def provider_name
@@ -40,7 +42,7 @@ module LlmConfig
       end
 
       def available?
-        return false if api_key.blank?
+        return false unless present?(api_key)
 
         client = http_client(timeout: 10)
         response = client.get("#{endpoint}/models") do |req|
@@ -81,7 +83,7 @@ module LlmConfig
       def build_messages(prompt, opts)
         messages = []
 
-        if opts[:system_prompt].present?
+        if present?(opts[:system_prompt])
           messages << { role: "system", content: opts[:system_prompt] }
         end
 

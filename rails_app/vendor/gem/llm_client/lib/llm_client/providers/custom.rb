@@ -1,25 +1,27 @@
-module LlmConfig
-  module Provider
-    class Openrouter < Base
+# frozen_string_literal: true
+
+module LlmClient
+  module Providers
+    class Custom < Base
       class << self
         def provider_name
-          "OpenRouter"
+          "Custom (OpenAI-compatible)"
         end
 
         def provider_type
-          "openrouter"
+          "custom"
         end
 
         def default_endpoint
-          "https://openrouter.ai/api/v1"
+          ""
         end
 
         def default_models
-          %w[anthropic/claude-3.5-sonnet openai/gpt-4o meta-llama/llama-3.1-70b-instruct]
+          []
         end
 
         def requires_api_key?
-          true
+          false
         end
       end
 
@@ -27,12 +29,16 @@ module LlmConfig
         client = http_client(timeout: timeout)
 
         body = build_request_body(prompt, schema, opts)
+        completions_endpoint = options["completions_path"] || "/chat/completions"
 
-        response = client.post("#{endpoint}/chat/completions") do |req|
+        response = client.post("#{endpoint}#{completions_endpoint}") do |req|
           req.headers["Content-Type"] = "application/json"
-          req.headers["Authorization"] = "Bearer #{api_key}"
-          req.headers["HTTP-Referer"] = opts[:referer] || options["referer"] || ""
-          req.headers["X-Title"] = opts[:app_name] || options["app_name"] || "CollaborativeKanban"
+          req.headers["Authorization"] = "Bearer #{api_key}" if present?(api_key)
+
+          options["headers"]&.each do |key, value|
+            req.headers[key] = value
+          end
+
           req.body = body.to_json
         end
 
@@ -42,11 +48,13 @@ module LlmConfig
       end
 
       def available?
-        return false if api_key.blank?
+        return false unless present?(endpoint)
 
         client = http_client(timeout: 10)
-        response = client.get("#{endpoint}/models") do |req|
-          req.headers["Authorization"] = "Bearer #{api_key}"
+        health_endpoint = options["health_path"] || "/models"
+
+        response = client.get("#{endpoint}#{health_endpoint}") do |req|
+          req.headers["Authorization"] = "Bearer #{api_key}" if present?(api_key)
         end
 
         response.success?
@@ -67,8 +75,19 @@ module LlmConfig
         }
 
         if schema
-          body[:response_format] = { type: "json_object" }
-          messages.last[:content] = add_schema_instruction(messages.last[:content], schema)
+          if options["json_schema_support"]
+            body[:response_format] = {
+              type: "json_schema",
+              json_schema: {
+                name: "response",
+                strict: true,
+                schema: schema
+              }
+            }
+          else
+            body[:response_format] = { type: "json_object" }
+            messages.last[:content] = add_schema_instruction(messages.last[:content], schema)
+          end
         end
 
         body
@@ -77,7 +96,7 @@ module LlmConfig
       def build_messages(prompt, opts)
         messages = []
 
-        if opts[:system_prompt].present?
+        if present?(opts[:system_prompt])
           messages << { role: "system", content: opts[:system_prompt] }
         end
 
@@ -98,7 +117,7 @@ module LlmConfig
         data = parse_json_response(body)
         content = data.dig("choices", 0, "message", "content")
 
-        if schema && content.present?
+        if schema && present?(content)
           parse_json_response(content)
         else
           content

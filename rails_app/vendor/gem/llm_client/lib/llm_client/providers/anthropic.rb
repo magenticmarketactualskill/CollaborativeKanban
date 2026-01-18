@@ -1,5 +1,7 @@
-module LlmConfig
-  module Provider
+# frozen_string_literal: true
+
+module LlmClient
+  module Providers
     class Anthropic < Base
       ANTHROPIC_VERSION = "2023-06-01"
 
@@ -43,7 +45,7 @@ module LlmConfig
       end
 
       def available?
-        return false if api_key.blank?
+        return false unless present?(api_key)
 
         client = http_client(timeout: 10)
         response = client.post("#{endpoint}/messages") do |req|
@@ -71,7 +73,7 @@ module LlmConfig
           messages: build_messages(prompt, opts)
         }
 
-        if opts[:system_prompt].present?
+        if present?(opts[:system_prompt])
           body[:system] = opts[:system_prompt]
         end
 

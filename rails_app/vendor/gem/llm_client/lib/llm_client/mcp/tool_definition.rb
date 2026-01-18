@@ -1,5 +1,7 @@
-module Mcp
-  module Client
+# frozen_string_literal: true
+
+module LlmClient
+  module Mcp
     class ToolDefinition
       attr_reader :name, :description, :input_schema, :source, :connection
 
@@ -21,7 +23,8 @@ module Mcp
 
       def full_name
         if external? && connection
-          "#{connection.name}/#{name}"
+          connection_name = connection.respond_to?(:name) ? connection.name : connection.to_s
+          "#{connection_name}/#{name}"
         else
           name
         end

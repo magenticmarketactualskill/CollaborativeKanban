@@ -1,5 +1,7 @@
-module LlmConfig
-  module Provider
+# frozen_string_literal: true
+
+module LlmClient
+  module Providers
     class Ollama < Base
       class << self
         def provider_name
@@ -30,7 +32,7 @@ module LlmConfig
 
         response = client.post("#{endpoint}/api/generate") do |req|
           req.headers["Content-Type"] = "application/json"
-          req.headers["Authorization"] = "Bearer #{api_key}" if api_key.present?
+          req.headers["Authorization"] = "Bearer #{api_key}" if present?(api_key)
           req.body = body.to_json
         end
 
@@ -77,7 +79,7 @@ module LlmConfig
       end
 
       def build_prompt(prompt, opts)
-        if opts[:system_prompt].present?
+        if present?(opts[:system_prompt])
           "#{opts[:system_prompt]}\n\n#{prompt}"
         else
           prompt
@@ -89,7 +91,7 @@ module LlmConfig
         ollama_options[:temperature] = opts[:temperature] if opts[:temperature]
         ollama_options[:num_predict] = opts[:max_tokens] if opts[:max_tokens]
 
-        options.merge(ollama_options.stringify_keys)
+        options.merge(stringify_keys(ollama_options))
       end
 
       def add_schema_instruction(prompt, schema)
@@ -107,11 +109,15 @@ module LlmConfig
         data = parse_json_response(body)
         content = data["response"]
 
-        if schema && content.present?
+        if schema && present?(content)
           parse_json_response(content)
         else
           content
         end
+      end
+
+      def stringify_keys(hash)
+        hash.transform_keys(&:to_s)
       end
     end
   end

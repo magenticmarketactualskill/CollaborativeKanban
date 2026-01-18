@@ -35,7 +35,7 @@ module CardIntelligence
         current_metadata: card.card_metadata.to_json
       )
 
-      response = Llm::Router.route(:suggestion, prompt)
+      response = LlmClient::Llm::Router.route(:suggestion, prompt)
 
       if response.success?
         parse_suggestions(response, card)

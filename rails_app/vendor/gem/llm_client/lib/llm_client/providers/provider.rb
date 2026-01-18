@@ -1,11 +1,13 @@
-module LlmConfig
-  module Provider
+# frozen_string_literal: true
+
+module LlmClient
+  module Providers
     REGISTRY = {
-      "openai" => "LlmConfig::Provider::Openai",
-      "anthropic" => "LlmConfig::Provider::Anthropic",
-      "ollama" => "LlmConfig::Provider::Ollama",
-      "openrouter" => "LlmConfig::Provider::Openrouter",
-      "custom" => "LlmConfig::Provider::Custom"
+      "openai" => "LlmClient::Providers::Openai",
+      "anthropic" => "LlmClient::Providers::Anthropic",
+      "ollama" => "LlmClient::Providers::Ollama",
+      "openrouter" => "LlmClient::Providers::Openrouter",
+      "custom" => "LlmClient::Providers::Custom"
     }.freeze
 
     class << self
@@ -24,7 +26,7 @@ module LlmConfig
 
       def all_providers
         REGISTRY.map do |type, class_name|
-          provider_class = class_name.safe_constantize
+          provider_class = const_get_safe(class_name)
           next unless provider_class
 
           {
@@ -43,10 +45,16 @@ module LlmConfig
         class_name = REGISTRY[type.to_s]
         raise ArgumentError, "Unknown provider type: #{type}" unless class_name
 
-        klass = class_name.safe_constantize
+        klass = const_get_safe(class_name)
         raise ArgumentError, "Provider class not found: #{class_name}" unless klass
 
         klass
+      end
+
+      def const_get_safe(class_name)
+        class_name.split("::").reduce(Object) { |mod, name| mod.const_get(name) }
+      rescue NameError
+        nil
       end
     end
   end

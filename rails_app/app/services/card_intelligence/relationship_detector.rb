@@ -49,7 +49,7 @@ module CardIntelligence
       return [] if other_cards.empty?
 
       prompt = build_prompt(card, other_cards)
-      response = Llm::Router.route(:relationship_detection, prompt)
+      response = LlmClient::Llm::Router.route(:relationship_detection, prompt)
 
       if response.success?
         parse_suggestions(response, card)

@@ -116,7 +116,7 @@ class RelationshipDetectionTask < ApplicationTask
         other_cards: other_cards_text
       )
 
-      response = Llm::Router.route(:relationship_detection, prompt)
+      response = LlmClient::Llm::Router.route(:relationship_detection, prompt)
 
       if response.success?
         task.broadcast_stage_progress(RelationshipDetectionTask::STAGE_PROCESSING)

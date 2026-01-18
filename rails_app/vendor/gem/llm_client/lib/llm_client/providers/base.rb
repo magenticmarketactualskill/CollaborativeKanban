@@ -1,14 +1,20 @@
-module LlmConfig
-  module Provider
+# frozen_string_literal: true
+
+require "faraday"
+require "json"
+
+module LlmClient
+  module Providers
     class Base
-      class ConnectionError < StandardError; end
-      class TimeoutError < StandardError; end
-      class RateLimitError < StandardError; end
-      class AuthenticationError < StandardError; end
-      class InvalidResponseError < StandardError; end
+      class ConnectionError < LlmClient::Error; end
+      class TimeoutError < LlmClient::Error; end
+      class RateLimitError < LlmClient::Error; end
+      class AuthenticationError < LlmClient::Error; end
+      class InvalidResponseError < LlmClient::Error; end
 
       attr_reader :configuration
 
+      # configuration: Object that responds to provider_type, model, api_key, endpoint, options, name
       def initialize(configuration)
         @configuration = configuration
       end
@@ -32,23 +38,35 @@ module LlmConfig
       end
 
       def name
-        "#{self.class.provider_name} (#{configuration.name})"
+        config_name = configuration.respond_to?(:name) ? configuration.name : "default"
+        "#{self.class.provider_name} (#{config_name})"
       end
 
       def endpoint
-        configuration.effective_endpoint
+        if configuration.respond_to?(:effective_endpoint)
+          configuration.effective_endpoint
+        elsif configuration.respond_to?(:endpoint)
+          ep = configuration.endpoint
+          present?(ep) ? ep : self.class.default_endpoint
+        else
+          self.class.default_endpoint
+        end
       end
 
       def model
-        configuration.model
+        configuration.respond_to?(:model) ? configuration.model : nil
       end
 
       def api_key
-        configuration.api_key
+        configuration.respond_to?(:api_key) ? configuration.api_key : nil
       end
 
       def options
-        configuration.options || {}
+        if configuration.respond_to?(:options)
+          configuration.options || {}
+        else
+          {}
+        end
       end
 
       class << self
@@ -100,6 +118,14 @@ module LlmConfig
           raise TimeoutError, "Request timed out"
         else
           raise ConnectionError, "HTTP #{response.status}: #{response.body}"
+        end
+      end
+
+      def present?(value)
+        case value
+        when nil then false
+        when String then !value.empty?
+        else true
         end
       end
     end

@@ -67,7 +67,7 @@ module CardIntelligence
         description: description || "(no description)"
       )
 
-      response = Llm::Router.route(:type_inference, prompt)
+      response = LlmClient::Llm::Router.route(:type_inference, prompt)
 
       if response.success?
         parse_inference_response(response)

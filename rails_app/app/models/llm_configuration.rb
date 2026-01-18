@@ -20,7 +20,7 @@ class LlmConfiguration < ApplicationRecord
   before_save :ensure_single_default, if: :default_for_type_changed?
 
   def provider
-    @provider ||= LlmConfig::Provider.for(self)
+    @provider ||= LlmClient::Providers.for(self)
   end
 
   def test_connection

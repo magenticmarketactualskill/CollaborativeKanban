@@ -1,13 +1,17 @@
-require "websocket-client-simple"
+# frozen_string_literal: true
 
-module Mcp
-  module Client
+require "websocket-client-simple"
+require "json"
+require "timeout"
+
+module LlmClient
+  module Mcp
     class WebSocketClient
-      MCP_PROTOCOL_VERSION = "2024-11-05"
       DEFAULT_TIMEOUT = 30
 
       attr_reader :connection
 
+      # connection: Object that responds to :id, :url, :auth_type, :auth_token
       def initialize(connection)
         @connection = connection
         @ws = nil
@@ -18,17 +22,17 @@ module Mcp
       end
 
       def connect
-        @connection.update!(status: "connecting")
+        notify_state_change(:connecting)
 
         begin
-          @ws = WebSocket::Client::Simple.connect(@connection.url, headers: auth_headers)
+          @ws = WebSocket::Client::Simple.connect(connection_url, headers: auth_headers)
           setup_handlers
           wait_for_connection
           initialize_mcp_connection
           @connected = true
-          @connection.mark_connected!
+          notify_state_change(:connected)
         rescue StandardError => e
-          @connection.mark_error!(e.message)
+          notify_state_change(:error, error: e.message)
           raise ConnectionError, "Failed to connect: #{e.message}"
         end
       end
@@ -36,7 +40,7 @@ module Mcp
       def disconnect
         @ws&.close
         @connected = false
-        @connection.mark_disconnected!
+        notify_state_change(:disconnected)
       end
 
       def connected?
@@ -72,19 +76,8 @@ module Mcp
       end
 
       def call_tool(tool_name, arguments = {})
-        call_record = McpToolCall.log_outbound(
-          tool_name: tool_name,
-          arguments: arguments,
-          connection: @connection
-        )
-
-        begin
-          result = call_method("tools/call", { name: tool_name, arguments: arguments })
-          call_record.complete!(result)
-          result
-        rescue StandardError => e
-          call_record.fail!(e.message)
-          raise
+        log_tool_call(:outbound, tool_name, arguments) do
+          call_method("tools/call", { name: tool_name, arguments: arguments })
         end
       end
 
@@ -108,11 +101,7 @@ module Mcp
         resources = list_resources
         prompts = list_prompts
 
-        @connection.update_capabilities(
-          tools: tools,
-          resources: resources,
-          prompts: prompts
-        )
+        notify_capabilities_update(tools: tools, resources: resources, prompts: prompts)
 
         { tools: tools, resources: resources, prompts: prompts }
       end
@@ -123,10 +112,21 @@ module Mcp
         @mutex.synchronize { @request_id += 1 }
       end
 
+      def connection_url
+        @connection.respond_to?(:url) ? @connection.url : @connection.to_s
+      end
+
+      def connection_id
+        @connection.respond_to?(:id) ? @connection.id : @connection.object_id
+      end
+
       def auth_headers
-        case @connection.auth_type
+        auth_type = @connection.respond_to?(:auth_type) ? @connection.auth_type : nil
+        auth_token = @connection.respond_to?(:auth_token) ? @connection.auth_token : nil
+
+        case auth_type
         when "token"
-          { "Authorization" => "Bearer #{@connection.auth_token}" }
+          { "Authorization" => "Bearer #{auth_token}" }
         else
           {}
         end
@@ -140,7 +140,7 @@ module Mcp
         end
 
         @ws.on :error do |e|
-          Rails.logger.error("MCP WebSocket error: #{e.message}")
+          LlmClient.logger.error("MCP WebSocket error: #{e.message}")
         end
 
         @ws.on :close do |_e|
@@ -149,18 +149,19 @@ module Mcp
       end
 
       def wait_for_connection(timeout: 10)
-        start = Time.current
+        start = Time.now
         until @ws.open?
-          raise ConnectionError, "Connection timeout" if Time.current - start > timeout
+          raise ConnectionError, "Connection timeout" if Time.now - start > timeout
           sleep 0.1
         end
       end
 
       def initialize_mcp_connection
+        config = LlmClient.configuration
         call_method("initialize", {
-          protocolVersion: MCP_PROTOCOL_VERSION,
+          protocolVersion: config.mcp_protocol_version,
           capabilities: {},
-          clientInfo: { name: "CollaborativeKanban", version: "1.0.0" }
+          clientInfo: config.mcp_client_info
         })
       end
 
@@ -172,20 +173,34 @@ module Mcp
           queue&.push(message[:error] ? { error: message[:error] } : message[:result])
         end
       rescue JSON::ParserError => e
-        Rails.logger.error("MCP: Failed to parse message: #{e.message}")
+        LlmClient.logger.error("MCP: Failed to parse message: #{e.message}")
       end
-    end
 
-    class ConnectionError < StandardError; end
-    class NotConnectedError < StandardError; end
-    class TimeoutError < StandardError; end
+      def notify_state_change(state, error: nil)
+        handler = LlmClient.configuration.connection_state_handler
+        handler&.call(connection_id, state, error: error)
+      end
 
-    class RpcError < StandardError
-      attr_reader :code
+      def notify_capabilities_update(tools:, resources:, prompts:)
+        updater = LlmClient.configuration.capabilities_updater
+        updater&.call(connection_id, tools: tools, resources: resources, prompts: prompts)
+      end
 
-      def initialize(code, message)
-        @code = code
-        super(message)
+      def log_tool_call(direction, tool_name, arguments)
+        logger = LlmClient.configuration.tool_call_logger
+        result = nil
+        error = nil
+
+        begin
+          result = yield
+        rescue StandardError => e
+          error = e.message
+          raise
+        ensure
+          logger&.call(direction, tool_name, arguments, result, error: error, connection: @connection)
+        end
+
+        result
       end
     end
   end

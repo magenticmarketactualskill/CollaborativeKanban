@@ -46,7 +46,7 @@ module Settings
     end
 
     def destroy
-      Mcp::Client::ConnectionManager.instance.disconnect(@connection)
+      LlmClient::Mcp::ConnectionManager.instance.disconnect(@connection)
       @connection.destroy
 
       respond_to do |format|
@@ -56,13 +56,13 @@ module Settings
     end
 
     def connect
-      Mcp::Client::ConnectionManager.instance.connect(@connection)
+      LlmClient::Mcp::ConnectionManager.instance.connect(@connection)
 
       respond_to do |format|
         format.html { redirect_to settings_mcp_clients_path, notice: "Connected to #{@connection.name}." }
         format.json { render json: { success: true, status: @connection.reload.status } }
       end
-    rescue Mcp::Client::ConnectionError => e
+    rescue LlmClient::Mcp::ConnectionError => e
       respond_to do |format|
         format.html { redirect_to settings_mcp_clients_path, alert: "Connection failed: #{e.message}" }
         format.json { render json: { success: false, error: e.message }, status: :unprocessable_entity }
@@ -70,7 +70,7 @@ module Settings
     end
 
     def disconnect
-      Mcp::Client::ConnectionManager.instance.disconnect(@connection)
+      LlmClient::Mcp::ConnectionManager.instance.disconnect(@connection)
 
       respond_to do |format|
         format.html { redirect_to settings_mcp_clients_path, notice: "Disconnected from #{@connection.name}." }
@@ -79,14 +79,14 @@ module Settings
     end
 
     def refresh_capabilities
-      client = Mcp::Client::ConnectionManager.instance.connect(@connection)
+      client = LlmClient::Mcp::ConnectionManager.instance.connect(@connection)
       capabilities = client.refresh_capabilities
 
       respond_to do |format|
         format.html { redirect_to settings_mcp_clients_path, notice: "Capabilities refreshed: #{capabilities[:tools].size} tools found." }
         format.json { render json: { success: true, capabilities: capabilities } }
       end
-    rescue Mcp::Client::ConnectionError, Mcp::Client::NotConnectedError => e
+    rescue LlmClient::Mcp::ConnectionError, LlmClient::Mcp::NotConnectedError => e
       respond_to do |format|
         format.html { redirect_to settings_mcp_clients_path, alert: "Failed to refresh: #{e.message}" }
         format.json { render json: { success: false, error: e.message }, status: :unprocessable_entity }

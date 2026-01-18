@@ -31,10 +31,10 @@ module Mcp
           task_type = arguments["task_type"] || "general"
           schema_name = arguments["schema_name"]
 
-          result = Llm::Router.route(
+          result = LlmClient::Llm::Router.route(
             task_type.to_sym,
             prompt,
-            schema_name: schema_name
+            schema: schema_name&.to_sym
           )
 
           if result.success?

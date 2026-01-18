@@ -59,6 +59,9 @@ gem "task-frame", git: "https://github.com/actual-skill/task-frame-ruby.git"
 gem "websocket-client-simple", "~> 0.8"
 gem "rubyzip", "~> 2.3"
 
+# LLM Client gem (vendored)
+gem "llm_client", path: "vendor/gem/llm_client"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
