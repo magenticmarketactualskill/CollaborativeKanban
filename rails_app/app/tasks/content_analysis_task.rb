@@ -1,6 +1,12 @@
 # frozen_string_literal: true
 
 class ContentAnalysisTask < ApplicationTask
+  # Stage indices for progress tracking
+  STAGE_VALIDATING = 0
+  STAGE_ANALYZING = 1
+  STAGE_PROCESSING = 2
+  STAGE_SAVING = 3
+
   def stage_klass_sequence
     [
       ValidateInput,
@@ -9,6 +15,18 @@ class ContentAnalysisTask < ApplicationTask
       UpdateCard,
       Broadcast
     ]
+  end
+
+  # Broadcast progress update to the loading UI
+  def broadcast_stage_progress(stage_index)
+    return unless card
+
+    broadcast_replace(
+      stream: "card_#{card.id}",
+      target: "card-#{card.id}-analysis",
+      partial: "cards/analysis_loading",
+      locals: { card: card, stage: stage_index }
+    )
   end
 
   # Stage 1: Validate input and find card
@@ -24,6 +42,10 @@ class ContentAnalysisTask < ApplicationTask
       return result if result.failure?
 
       card = result.value![:card]
+
+      # Broadcast that we're moving to the analyzing stage
+      task.broadcast_stage_progress(ContentAnalysisTask::STAGE_ANALYZING)
+
       Success(
         card: card,
         card_type: card.card_type,
@@ -74,6 +96,9 @@ class ContentAnalysisTask < ApplicationTask
       response = Llm::Router.route(:analysis, prompt)
 
       if response.success?
+        # Broadcast that we're moving to processing stage
+        task.broadcast_stage_progress(ContentAnalysisTask::STAGE_PROCESSING)
+
         Success(
           response: response,
           content: response.content,
@@ -97,6 +122,9 @@ class ContentAnalysisTask < ApplicationTask
       llm_result = task.result_for(CallLlm)
       response = llm_result[:response]
       json = response.parsed_json
+
+      # Broadcast that we're moving to saving stage
+      task.broadcast_stage_progress(ContentAnalysisTask::STAGE_SAVING)
 
       if json
         Success(

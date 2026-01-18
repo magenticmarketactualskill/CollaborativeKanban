@@ -1,6 +1,12 @@
 # frozen_string_literal: true
 
 class SuggestionGenerationTask < ApplicationTask
+  # Stage indices for progress tracking
+  STAGE_PREPARING = 0
+  STAGE_GENERATING = 1
+  STAGE_PROCESSING = 2
+  STAGE_SAVING = 3
+
   def stage_klass_sequence
     [
       ValidateInput,
@@ -9,6 +15,18 @@ class SuggestionGenerationTask < ApplicationTask
       SaveRecords,
       Broadcast
     ]
+  end
+
+  # Broadcast progress update to the loading UI
+  def broadcast_stage_progress(stage_index)
+    return unless card
+
+    broadcast_replace(
+      stream: "card_#{card.id}_suggestions",
+      target: "card-#{card.id}-suggestions",
+      partial: "cards/suggestions_loading",
+      locals: { card: card, stage: stage_index }
+    )
   end
 
   # Stage 1: Validate input and find card
@@ -25,6 +43,9 @@ class SuggestionGenerationTask < ApplicationTask
 
       card = result.value![:card]
       schema = CardSchemas::Registry.instance.schema_for_card(card)
+
+      # Broadcast that we're moving to the generating stage
+      task.broadcast_stage_progress(SuggestionGenerationTask::STAGE_GENERATING)
 
       Success(
         card: card,
@@ -81,6 +102,9 @@ class SuggestionGenerationTask < ApplicationTask
       response = Llm::Router.route(:suggestion, prompt)
 
       if response.success?
+        # Broadcast that we're moving to processing stage
+        task.broadcast_stage_progress(SuggestionGenerationTask::STAGE_PROCESSING)
+
         Success(
           response: response,
           content: response.content,
@@ -103,6 +127,9 @@ class SuggestionGenerationTask < ApplicationTask
       llm_result = task.result_for(GenerateSuggestions)
       response = llm_result[:response]
       json = response.parsed_json
+
+      # Broadcast that we're moving to saving stage
+      task.broadcast_stage_progress(SuggestionGenerationTask::STAGE_SAVING)
 
       unless json.is_a?(Array)
         return Success(suggestions: [], provider: llm_result[:provider], stage: name)
