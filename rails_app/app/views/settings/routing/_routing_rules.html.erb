@@ -1,0 +1,40 @@
+<div class="bg-white shadow rounded-lg">
+  <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
+    <h3 class="text-lg font-medium leading-6 text-gray-900">Routing Rules</h3>
+    <p class="mt-1 text-sm text-gray-500">Task types and their provider mappings</p>
+  </div>
+  <div class="px-4 py-5 sm:p-6">
+    <div class="space-y-4">
+      <% routing_table.each do |task_type, config| %>
+        <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
+          <div class="flex items-center justify-between mb-2">
+            <span class="font-medium text-gray-900"><%= task_type.to_s.titleize.gsub('_', ' ') %></span>
+            <span class="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800">
+              <%= config[:timeout] %>s timeout
+            </span>
+          </div>
+          <div class="flex items-center gap-2 text-sm flex-wrap">
+            <span class="inline-flex items-center rounded-md bg-blue-100 px-2 py-1 text-xs font-medium text-blue-700">
+              Primary: <%= config[:primary].to_s.titleize %>
+            </span>
+            <% if config[:fallback] %>
+              <svg class="h-4 w-4 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+              <span class="inline-flex items-center rounded-md bg-yellow-100 px-2 py-1 text-xs font-medium text-yellow-700">
+                Fallback: <%= config[:fallback].to_s.titleize %>
+              </span>
+            <% else %>
+              <span class="text-gray-400 text-xs">No fallback</span>
+            <% end %>
+          </div>
+          <% if config[:schema] %>
+            <div class="mt-2 text-xs text-gray-500">
+              Schema: <code class="bg-gray-100 px-1 rounded"><%= config[:schema] %></code>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

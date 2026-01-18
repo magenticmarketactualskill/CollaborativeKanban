@@ -1,0 +1,59 @@
+<div class="bg-white shadow rounded-lg" data-controller="activity-filter">
+  <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
+    <h3 class="text-lg font-medium leading-6 text-gray-900">Activity History</h3>
+
+    <!-- Filters -->
+    <div class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div>
+        <label class="block text-xs font-medium text-gray-700 mb-1">Type</label>
+        <select data-activity-filter-target="callType" data-action="change->activity-filter#filter"
+                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm">
+          <option value="">All Types</option>
+          <option value="llm">LLM Calls</option>
+          <option value="mcp">MCP Calls</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-xs font-medium text-gray-700 mb-1">Task Type</label>
+        <select data-activity-filter-target="taskType" data-action="change->activity-filter#filter"
+                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm">
+          <option value="">All Tasks</option>
+          <% LlmCall::TASK_TYPES.each do |task| %>
+            <option value="<%= task %>"><%= task.titleize %></option>
+          <% end %>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-xs font-medium text-gray-700 mb-1">Status</label>
+        <select data-activity-filter-target="status" data-action="change->activity-filter#filter"
+                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm">
+          <option value="">All Statuses</option>
+          <option value="completed">Completed</option>
+          <option value="success">Success (MCP)</option>
+          <option value="failed">Failed</option>
+          <option value="error">Error (MCP)</option>
+          <option value="pending">Pending</option>
+          <option value="in_progress">In Progress</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-xs font-medium text-gray-700 mb-1">Search</label>
+        <input type="text" data-activity-filter-target="search" data-action="input->activity-filter#debounceFilter"
+               placeholder="Tool name..."
+               class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm">
+      </div>
+    </div>
+  </div>
+
+  <div data-activity-filter-target="results" class="divide-y divide-gray-200 max-h-80 overflow-y-auto">
+    <div class="px-4 py-8 text-center text-gray-500">
+      <svg class="mx-auto h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+      </svg>
+      <p class="mt-2 text-sm">Use filters above to search activity history</p>
+    </div>
+  </div>
+</div>

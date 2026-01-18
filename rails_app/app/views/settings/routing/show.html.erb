@@ -1,0 +1,52 @@
+<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10" data-controller="routing-dashboard">
+  <!-- Header -->
+  <div class="sm:flex sm:items-center sm:justify-between mb-8">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">Routing Dashboard</h1>
+      <p class="mt-2 text-sm text-gray-700">Monitor LLM and MCP routing activity, rules, and performance.</p>
+    </div>
+    <div class="mt-4 sm:ml-16 sm:mt-0 flex gap-4 items-center">
+      <!-- Provider Status Indicators -->
+      <div class="flex items-center gap-4">
+        <% @provider_status.each do |provider, available| %>
+          <div class="flex items-center gap-2">
+            <span class="h-2.5 w-2.5 rounded-full <%= available ? 'bg-green-500' : 'bg-red-500' %>"></span>
+            <span class="text-sm text-gray-600"><%= provider.to_s.titleize %></span>
+          </div>
+        <% end %>
+      </div>
+      <button type="button"
+              data-action="click->routing-dashboard#refresh"
+              class="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+        <svg class="h-4 w-4 mr-1.5" data-routing-dashboard-target="refreshIcon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+        Refresh
+      </button>
+    </div>
+  </div>
+
+  <!-- Statistics Cards -->
+  <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8" data-routing-dashboard-target="statisticsCards">
+    <%= render partial: 'statistics_cards', locals: { statistics: @statistics } %>
+  </div>
+
+  <!-- Main Content Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Left Column: Routing Rules -->
+    <div class="lg:col-span-1">
+      <%= render partial: 'routing_rules', locals: { routing_table: @routing_table } %>
+    </div>
+
+    <!-- Right Column: Activity Feed & History -->
+    <div class="lg:col-span-2 space-y-6">
+      <!-- Live Activity Feed -->
+      <turbo-frame id="activity-feed" data-routing-dashboard-target="activityFeed">
+        <%= render partial: 'activity_feed', locals: { llm_calls: @recent_llm_calls, mcp_calls: @recent_mcp_calls } %>
+      </turbo-frame>
+
+      <!-- Activity History with Filters -->
+      <%= render partial: 'activity_history' %>
+    </div>
+  </div>
+</div>

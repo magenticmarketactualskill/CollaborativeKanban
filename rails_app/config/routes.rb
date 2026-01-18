@@ -33,6 +33,13 @@ Rails.application.routes.draw do
         post :execute
       end
     end
+
+    resource :routing, only: [:show], controller: 'routing' do
+      collection do
+        get :activity
+        get :statistics
+      end
+    end
   end
 
   # LLM Configurations

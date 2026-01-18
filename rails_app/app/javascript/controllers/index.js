@@ -21,3 +21,9 @@ application.register("loading-progress", LoadingProgressController)
 
 import SettingsMenuController from "./settings_menu_controller"
 application.register("settings-menu", SettingsMenuController)
+
+import RoutingDashboardController from "./routing_dashboard_controller"
+application.register("routing-dashboard", RoutingDashboardController)
+
+import ActivityFilterController from "./activity_filter_controller"
+application.register("activity-filter", ActivityFilterController)

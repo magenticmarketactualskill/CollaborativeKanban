@@ -1,0 +1,72 @@
+<div class="px-4 py-3 hover:bg-gray-50 transition-colors">
+  <% if activity.is_a?(LlmCall) %>
+    <%
+      status_colors = {
+        'completed' => 'bg-green-500',
+        'failed' => 'bg-red-500',
+        'pending' => 'bg-gray-400',
+        'in_progress' => 'bg-yellow-500'
+      }
+    %>
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="flex-shrink-0">
+          <span class="h-2 w-2 rounded-full <%= status_colors[activity.status] || 'bg-gray-400' %> inline-block"></span>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="inline-flex items-center rounded bg-blue-100 px-1.5 py-0.5 text-xs font-medium text-blue-700">LLM</span>
+            <span class="font-medium text-gray-900 text-sm"><%= activity.task_type.titleize %></span>
+          </div>
+          <div class="text-xs text-gray-500 mt-0.5">
+            <%= activity.provider || activity.llm_configuration&.provider_type || 'Unknown' %>
+            <% if activity.latency_ms %>
+              &middot; <%= number_with_delimiter(activity.latency_ms) %>ms
+            <% end %>
+            <% if activity.total_tokens %>
+              &middot; <%= number_with_delimiter(activity.total_tokens) %> tokens
+            <% end %>
+          </div>
+        </div>
+      </div>
+      <div class="text-xs text-gray-400">
+        <%= time_ago_in_words(activity.created_at) %> ago
+      </div>
+    </div>
+  <% else %>
+    <%
+      status_colors = {
+        'success' => 'bg-green-500',
+        'error' => 'bg-red-500',
+        'pending' => 'bg-yellow-500'
+      }
+    %>
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="flex-shrink-0">
+          <span class="h-2 w-2 rounded-full <%= status_colors[activity.status] || 'bg-gray-400' %> inline-block"></span>
+        </div>
+        <div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="inline-flex items-center rounded bg-purple-100 px-1.5 py-0.5 text-xs font-medium text-purple-700">MCP</span>
+            <span class="font-medium text-gray-900 text-sm"><%= activity.tool_name %></span>
+            <span class="inline-flex items-center rounded bg-gray-100 px-1.5 py-0.5 text-xs font-medium text-gray-600">
+              <%= activity.direction %>
+            </span>
+          </div>
+          <div class="text-xs text-gray-500 mt-0.5">
+            <% if activity.latency_ms %>
+              <%= number_with_delimiter(activity.latency_ms) %>ms
+            <% end %>
+            <% if activity.mcp_client_connection %>
+              <% if activity.latency_ms %>&middot;<% end %> <%= activity.mcp_client_connection.name %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+      <div class="text-xs text-gray-400">
+        <%= time_ago_in_words(activity.created_at) %> ago
+      </div>
+    </div>
+  <% end %>
+</div>

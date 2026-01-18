@@ -1,0 +1,29 @@
+<div class="bg-white shadow rounded-lg">
+  <div class="px-4 py-5 sm:px-6 border-b border-gray-200 flex items-center justify-between">
+    <div>
+      <h3 class="text-lg font-medium leading-6 text-gray-900">Recent Activity</h3>
+      <p class="mt-1 text-sm text-gray-500">Live feed of incoming calls</p>
+    </div>
+    <div class="flex items-center gap-2">
+      <span class="relative flex h-3 w-3">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+      </span>
+      <span class="text-xs text-gray-500">Live</span>
+    </div>
+  </div>
+  <div class="divide-y divide-gray-200 max-h-96 overflow-y-auto" id="activity-list">
+    <% combined_activity = (llm_calls.to_a + mcp_calls.to_a).sort_by(&:created_at).reverse.first(20) %>
+    <% combined_activity.each do |activity| %>
+      <%= render partial: 'activity_item', locals: { activity: activity } %>
+    <% end %>
+    <% if combined_activity.empty? %>
+      <div class="px-4 py-8 text-center text-gray-500">
+        <svg class="mx-auto h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+        </svg>
+        <p class="mt-2 text-sm">No recent activity</p>
+      </div>
+    <% end %>
+  </div>
+</div>
