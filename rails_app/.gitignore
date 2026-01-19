@@ -1,6 +1,0 @@
-tmp/
-log/
-
-# Ignore master key for security
-config/master.key
-
