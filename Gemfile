@@ -59,11 +59,11 @@ gem "task-frame", git: "https://github.com/actual-skill/task-frame-ruby.git"
 gem "websocket-client-simple", "~> 0.8"
 gem "rubyzip", "~> 2.3"
 
-# LLM Client gem (vendored)
-gem "llm_client", path: "vendor/gem/llm_client"
+# LLM Client gem
+gem "llm_client", git: "https://github.com/magenticmarketactualskill/llm_client.git"
 
-# Entity Knowledge gem (vendored) - knowledge graph engine
-gem "entity_knowledge", path: "vendor/gem/entity_knowledge"
+# Entity Knowledge gem - knowledge graph engine
+gem "entity_knowledge", git: "https://github.com/magenticmarketactualskill/entity_knowledge.git"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem

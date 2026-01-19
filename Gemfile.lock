@@ -6,14 +6,16 @@ GIT
       dry-effects (~> 0.4)
       dry-monads (~> 1.6)
 
-PATH
-  remote: vendor/gem/entity_knowledge
+GIT
+  remote: https://github.com/magenticmarketactualskill/entity_knowledge.git
+  revision: 57730bd5a4e5153b7bf17b78bdd98eddcc0641ad
   specs:
     entity_knowledge (0.1.0)
       rails (>= 7.0)
 
-PATH
-  remote: vendor/gem/llm_client
+GIT
+  remote: https://github.com/magenticmarketactualskill/llm_client.git
+  revision: 2c641973ba7e5fbff53df3d159e60e63b431275d
   specs:
     llm_client (0.1.0)
       faraday (~> 2.0)
