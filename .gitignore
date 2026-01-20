@@ -4,3 +4,7 @@ log/
 # Ignore master key for security
 config/master.key
 
+
+# Ignore key files for decrypting credentials and more.
+/config/*.key
+
